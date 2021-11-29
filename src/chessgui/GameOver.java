@@ -7,33 +7,54 @@ package chessgui;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 
 /**
  *
  * @author tylar
  */
+
 public class GameOver extends javax.swing.JPanel {
 
-    private boolean isWhite;
+    private int isWhite;
+    private String method;
     private MainFrame mainFrame;
+    private Image background;
     
-    public GameOver(Boolean isWhite, MainFrame mainFrame) {
+    public GameOver(String method, int isWhite, MainFrame mainFrame) throws IOException {
         initComponents();
         this.isWhite = isWhite;
         this.mainFrame = mainFrame;
-        this.setBorder(BorderFactory.createLineBorder(Color.black));
+        this.method = method;
+        this.background = ImageIO.read(new File("images/board.png"));
+        this.background = background.getScaledInstance(880, 880, Image.SCALE_SMOOTH);
+        this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         GameOptionsPanel panel = new GameOptionsPanel(mainFrame);
         panel.setBorder(BorderFactory.createLineBorder(Color.black));
         OptionsPanel.add(panel);
         OptionsPanel.setLayout(new FlowLayout());
         
-        if(isWhite){
-            WinnerLabel.setText("White has Won!");
+        if(this.isWhite == 1){
+            WinnerLabel.setText("White Has Won By " + this.method);
         }
-        else{
-            WinnerLabel.setText("Black has Won!");
+        else if(this.isWhite == -1){
+            WinnerLabel.setText("Black Has Won By " + this.method);
         }
+        else if(this.isWhite == 0){
+            WinnerLabel.setText("Game Has Drawn By " + this.method);
+        }
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g){
+        super.paintComponent(g);
+        g.drawImage(background, 0, 0, null);
     }
 
     /**
@@ -45,21 +66,19 @@ public class GameOver extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        OptionsPanel = new javax.swing.JPanel();
+        MainMenuButton = new javax.swing.JButton();
+        HeaderPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         WinnerLabel = new javax.swing.JLabel();
-        OptionsPanel = new javax.swing.JPanel();
         PlayAgainLabel = new javax.swing.JLabel();
-        MainMenuButton = new javax.swing.JButton();
 
-        setPreferredSize(new java.awt.Dimension(800, 790));
+        setMaximumSize(new java.awt.Dimension(880, 880));
+        setMinimumSize(new java.awt.Dimension(880, 880));
+        setPreferredSize(new java.awt.Dimension(880, 880));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Game Over");
-
-        WinnerLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        WinnerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        WinnerLabel.setText("jLabel2");
+        OptionsPanel.setBackground(new java.awt.Color(88, 88, 88));
+        OptionsPanel.setOpaque(false);
 
         javax.swing.GroupLayout OptionsPanelLayout = new javax.swing.GroupLayout(OptionsPanel);
         OptionsPanel.setLayout(OptionsPanelLayout);
@@ -69,46 +88,80 @@ public class GameOver extends javax.swing.JPanel {
         );
         OptionsPanelLayout.setVerticalGroup(
             OptionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 174, Short.MAX_VALUE)
+            .addGap(0, 613, Short.MAX_VALUE)
         );
 
-        PlayAgainLabel.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        PlayAgainLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        PlayAgainLabel.setText("Play again?");
-
+        MainMenuButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         MainMenuButton.setText("Main Menu");
+        MainMenuButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         MainMenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MainMenuButtonActionPerformed(evt);
             }
         });
 
+        HeaderPanel.setBackground(new java.awt.Color(88, 88, 88));
+        HeaderPanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Game Over");
+
+        WinnerLabel.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        WinnerLabel.setForeground(new java.awt.Color(255, 255, 255));
+        WinnerLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        WinnerLabel.setText("jLabel2");
+
+        PlayAgainLabel.setFont(new java.awt.Font("SansSerif", 0, 24)); // NOI18N
+        PlayAgainLabel.setForeground(new java.awt.Color(255, 255, 255));
+        PlayAgainLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        PlayAgainLabel.setText("Would you like to play again?");
+
+        javax.swing.GroupLayout HeaderPanelLayout = new javax.swing.GroupLayout(HeaderPanel);
+        HeaderPanel.setLayout(HeaderPanelLayout);
+        HeaderPanelLayout.setHorizontalGroup(
+            HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HeaderPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(WinnerLabel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PlayAgainLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        HeaderPanelLayout.setVerticalGroup(
+            HeaderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HeaderPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(26, 26, 26)
+                .addComponent(WinnerLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(PlayAgainLabel)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(PlayAgainLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 780, Short.MAX_VALUE)
-                    .addComponent(WinnerLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(OptionsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(MainMenuButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(OptionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(MainMenuButton, javax.swing.GroupLayout.DEFAULT_SIZE, 860, Short.MAX_VALUE)
+                    .addComponent(HeaderPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(35, 35, 35)
-                .addComponent(WinnerLabel)
-                .addGap(39, 39, 39)
-                .addComponent(PlayAgainLabel)
+                .addComponent(HeaderPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(OptionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 392, Short.MAX_VALUE)
+                .addComponent(OptionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(MainMenuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -120,6 +173,7 @@ public class GameOver extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel HeaderPanel;
     private javax.swing.JButton MainMenuButton;
     private javax.swing.JPanel OptionsPanel;
     private javax.swing.JLabel PlayAgainLabel;

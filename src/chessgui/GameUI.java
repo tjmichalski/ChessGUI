@@ -7,6 +7,7 @@ package chessgui;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -76,7 +77,7 @@ public class GameUI extends javax.swing.JPanel {
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
-                        gameOver(false);
+                        gameOver(-1, "Timeout");
                     } catch (IOException ex) {
                         Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ClassNotFoundException ex) {
@@ -100,7 +101,7 @@ public class GameUI extends javax.swing.JPanel {
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
-                        gameOver(true);
+                        gameOver(1, "Timeout");
                     } catch (IOException ex) {
                         Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ClassNotFoundException ex) {
@@ -149,13 +150,17 @@ public class GameUI extends javax.swing.JPanel {
 
     public void pieceRemoved(String filePath, Boolean isWhite) throws IOException{
         if(isWhite){
-            BufferedImage piece = ImageIO.read(new File("images" + File.separator + "white_pieces" + File.separator + filePath));
+//            BufferedImage piece = ImageIO.read(new File("images" + File.separator + "white_pieces" + File.separator + filePath));
+            Image piece = ImageIO.read(new File("images" + File.separator + "white_pieces" + File.separator + filePath));
+            piece = piece.getScaledInstance(59, 59, Image.SCALE_SMOOTH);
             JLabel label = new JLabel(new ImageIcon(piece));
             blackGraphics.add(label);
             BlackCapturePanel.add(label);
         }
         else{
-            BufferedImage piece = ImageIO.read(new File("images" + File.separator + "black_pieces" + File.separator + filePath));
+//            BufferedImage piece = ImageIO.read(new File("images" + File.separator + "black_pieces" + File.separator + filePath));
+            Image piece = ImageIO.read(new File("images" + File.separator + "black_pieces" + File.separator + filePath));
+            piece = piece.getScaledInstance(59, 59, Image.SCALE_SMOOTH);
             JLabel label = new JLabel(new ImageIcon(piece));
             whiteGraphics.add(label);
             WhiteCapturePanel.add(label);
@@ -175,10 +180,10 @@ public class GameUI extends javax.swing.JPanel {
         mainFrame.pack();
     }
     
-    public void gameOver(Boolean isWhite) throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void gameOver(int isWhite, String method) throws IOException, FileNotFoundException, ClassNotFoundException{
         BoardPanel.remove(board);
         BoardPanel.repaint();
-        BoardPanel.add(new GameOver(isWhite, mainFrame));
+        BoardPanel.add(new GameOver(method, isWhite, mainFrame));
         boardLayout.setAlignment(FlowLayout.CENTER);
         mainFrame.pack();
         mainFrame.recordGame(board.getMoves());
@@ -199,25 +204,34 @@ public class GameUI extends javax.swing.JPanel {
         WhiteTimeField = new javax.swing.JTextField();
         BlackTimeField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        MovesHistory = new javax.swing.JTextArea();
-        jLabel3 = new javax.swing.JLabel();
         BlackCapturePanel = new javax.swing.JPanel();
         WhiteCapturePanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        MovesHistory = new javax.swing.JTextArea();
 
-        BoardPanel.setMinimumSize(new java.awt.Dimension(800, 800));
-        BoardPanel.setPreferredSize(new java.awt.Dimension(800, 800));
+        setBackground(new java.awt.Color(169, 169, 169));
+
+        BoardPanel.setBackground(new java.awt.Color(169, 169, 169));
+        BoardPanel.setMaximumSize(new java.awt.Dimension(880, 885));
+        BoardPanel.setMinimumSize(new java.awt.Dimension(880, 885));
+        BoardPanel.setPreferredSize(new java.awt.Dimension(880, 885));
 
         javax.swing.GroupLayout BoardPanelLayout = new javax.swing.GroupLayout(BoardPanel);
         BoardPanel.setLayout(BoardPanelLayout);
         BoardPanelLayout.setHorizontalGroup(
             BoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+            .addGap(0, 880, Short.MAX_VALUE)
         );
         BoardPanelLayout.setVerticalGroup(
             BoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 800, Short.MAX_VALUE)
+            .addGap(0, 885, Short.MAX_VALUE)
         );
+
+        SidePanel.setBackground(new java.awt.Color(238, 238, 238));
+        SidePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        SidePanel.setPreferredSize(new java.awt.Dimension(256, 885));
 
         ResignButton.setText("Resign");
         ResignButton.addActionListener(new java.awt.event.ActionListener() {
@@ -226,20 +240,21 @@ public class GameUI extends javax.swing.JPanel {
             }
         });
 
-        WhiteTimeField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        WhiteTimeField.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         WhiteTimeField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        BlackTimeField.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        BlackTimeField.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         BlackTimeField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jButton1.setText("Mute");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        MovesHistory.setColumns(20);
-        MovesHistory.setRows(5);
-        jScrollPane1.setViewportView(MovesHistory);
-
-        jLabel3.setText("Move History:");
-
+        BlackCapturePanel.setBackground(new java.awt.Color(238, 238, 238));
+        BlackCapturePanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
         BlackCapturePanel.setPreferredSize(new java.awt.Dimension(236, 200));
 
         javax.swing.GroupLayout BlackCapturePanelLayout = new javax.swing.GroupLayout(BlackCapturePanel);
@@ -250,9 +265,11 @@ public class GameUI extends javax.swing.JPanel {
         );
         BlackCapturePanelLayout.setVerticalGroup(
             BlackCapturePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
+            .addGap(0, 234, Short.MAX_VALUE)
         );
 
+        WhiteCapturePanel.setBackground(new java.awt.Color(238, 238, 238));
+        WhiteCapturePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         WhiteCapturePanel.setPreferredSize(new java.awt.Dimension(800, 55));
 
         javax.swing.GroupLayout WhiteCapturePanelLayout = new javax.swing.GroupLayout(WhiteCapturePanel);
@@ -263,7 +280,39 @@ public class GameUI extends javax.swing.JPanel {
         );
         WhiteCapturePanelLayout.setVerticalGroup(
             WhiteCapturePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 200, Short.MAX_VALUE)
+            .addGap(0, 234, Short.MAX_VALUE)
+        );
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        jLabel3.setText("Move History:");
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        MovesHistory.setColumns(20);
+        MovesHistory.setRows(5);
+        jScrollPane1.setViewportView(MovesHistory);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout SidePanelLayout = new javax.swing.GroupLayout(SidePanel);
@@ -274,13 +323,12 @@ public class GameUI extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(SidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ResignButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                    .addComponent(ResignButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
                     .addComponent(WhiteTimeField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(BlackTimeField)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(BlackCapturePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(WhiteCapturePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
+                    .addComponent(BlackCapturePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                    .addComponent(WhiteCapturePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         SidePanelLayout.setVerticalGroup(
@@ -289,19 +337,17 @@ public class GameUI extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(WhiteTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(WhiteCapturePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(WhiteCapturePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(BlackCapturePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(BlackCapturePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BlackTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ResignButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ResignButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -321,18 +367,16 @@ public class GameUI extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(BoardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 13, Short.MAX_VALUE))
-                    .addComponent(SidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(BoardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void ResignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResignButtonActionPerformed
         if(board.turnCounter % 2 == 1){
             try {
-                gameOver(true);
+                gameOver(1, "Resignation");
             } catch (IOException ex) {
                 Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -341,7 +385,7 @@ public class GameUI extends javax.swing.JPanel {
         }
         else{
             try {
-                gameOver(false);
+                gameOver(-1, "Resignation");
             } catch (IOException ex) {
                 Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
             } catch (ClassNotFoundException ex) {
@@ -349,6 +393,10 @@ public class GameUI extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_ResignButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -362,6 +410,7 @@ public class GameUI extends javax.swing.JPanel {
     private javax.swing.JTextField WhiteTimeField;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

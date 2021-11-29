@@ -43,30 +43,39 @@ public class GameOptionsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        TimeLabel = new javax.swing.JLabel();
-        TenMinButton = new javax.swing.JRadioButton();
-        TwentyMinButton = new javax.swing.JRadioButton();
-        ThirtyMinButton = new javax.swing.JRadioButton();
-        IncrementLabel = new javax.swing.JLabel();
+        ComputerButton = new javax.swing.JButton();
+        MultiplayerButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         ZeroSecButton = new javax.swing.JRadioButton();
         FiveSecButton = new javax.swing.JRadioButton();
         TenSecButton = new javax.swing.JRadioButton();
         ThirtySecButton = new javax.swing.JRadioButton();
-        ComputerButton = new javax.swing.JButton();
-        MultiplayerButton = new javax.swing.JButton();
+        IncrementLabel = new javax.swing.JLabel();
+        TenMinButton = new javax.swing.JRadioButton();
+        TwentyMinButton = new javax.swing.JRadioButton();
+        ThirtyMinButton = new javax.swing.JRadioButton();
+        TimeLabel = new javax.swing.JLabel();
 
-        TimeLabel.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        TimeLabel.setText("Game Time:");
+        setBackground(new java.awt.Color(88, 88, 88));
+        setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
-        TenMinButton.setText("10 Minutes");
+        ComputerButton.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        ComputerButton.setText("Play Vs. Computer");
+        ComputerButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
-        TwentyMinButton.setText("20 Minutes");
+        MultiplayerButton.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        MultiplayerButton.setText("Multiplayer");
+        MultiplayerButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
+        MultiplayerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MultiplayerButtonActionPerformed(evt);
+            }
+        });
 
-        ThirtyMinButton.setText("30 Minutes");
+        jPanel1.setBackground(new java.awt.Color(238, 238, 238));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
-        IncrementLabel.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        IncrementLabel.setText("Time Increment:");
-
+        ZeroSecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         ZeroSecButton.setText("0 Seconds");
         ZeroSecButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -74,20 +83,81 @@ public class GameOptionsPanel extends javax.swing.JPanel {
             }
         });
 
+        FiveSecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         FiveSecButton.setText("5 Seconds");
 
+        TenSecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         TenSecButton.setText("10 Seconds");
 
+        ThirtySecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         ThirtySecButton.setText("30 Seconds");
 
-        ComputerButton.setText("Play Vs. Computer");
+        IncrementLabel.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        IncrementLabel.setText("Select time increment on move:");
 
-        MultiplayerButton.setText("Multiplayer");
-        MultiplayerButton.addActionListener(new java.awt.event.ActionListener() {
+        TenMinButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        TenMinButton.setText("10 Minutes");
+        TenMinButton.setOpaque(false);
+        TenMinButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MultiplayerButtonActionPerformed(evt);
+                TenMinButtonActionPerformed(evt);
             }
         });
+
+        TwentyMinButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        TwentyMinButton.setText("20 Minutes");
+
+        ThirtyMinButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
+        ThirtyMinButton.setText("30 Minutes");
+
+        TimeLabel.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        TimeLabel.setText("Select Starting Gametime:");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(ZeroSecButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(FiveSecButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(TenSecButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(ThirtySecButton))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(TenMinButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(TwentyMinButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(ThirtyMinButton))
+                    .addComponent(IncrementLabel)
+                    .addComponent(TimeLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(TimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TenMinButton)
+                    .addComponent(TwentyMinButton)
+                    .addComponent(ThirtyMinButton))
+                .addGap(50, 50, 50)
+                .addComponent(IncrementLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(ZeroSecButton)
+                    .addComponent(FiveSecButton)
+                    .addComponent(TenSecButton)
+                    .addComponent(ThirtySecButton))
+                .addContainerGap(77, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -96,52 +166,23 @@ public class GameOptionsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(TenMinButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ComputerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(TwentyMinButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(ThirtyMinButton))
-                    .addComponent(TimeLabel)
-                    .addComponent(IncrementLabel)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(ComputerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(MultiplayerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(ZeroSecButton)
-                            .addGap(18, 18, 18)
-                            .addComponent(FiveSecButton)
-                            .addGap(18, 18, 18)
-                            .addComponent(TenSecButton)
-                            .addGap(18, 18, 18)
-                            .addComponent(ThirtySecButton))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(MultiplayerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(TimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(TenMinButton)
-                    .addComponent(TwentyMinButton)
-                    .addComponent(ThirtyMinButton))
-                .addGap(18, 18, 18)
-                .addComponent(IncrementLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ZeroSecButton)
-                    .addComponent(FiveSecButton)
-                    .addComponent(TenSecButton)
-                    .addComponent(ThirtySecButton))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ComputerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(MultiplayerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -243,6 +284,10 @@ public class GameOptionsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_MultiplayerButtonActionPerformed
 
+    private void TenMinButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TenMinButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TenMinButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ComputerButton;
@@ -256,5 +301,6 @@ public class GameOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel TimeLabel;
     private javax.swing.JRadioButton TwentyMinButton;
     private javax.swing.JRadioButton ZeroSecButton;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

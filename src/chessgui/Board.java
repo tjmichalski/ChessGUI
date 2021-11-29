@@ -18,11 +18,12 @@ import javax.swing.*;
 public final class Board extends JPanel {
         
     public int turnCounter = 0;
+    public int fiftyMovesCounter = 0;
     private ArrayList<String> moves;
 
-    private static final Image NULL_IMAGE = new BufferedImage(10, 10, BufferedImage.TYPE_INT_ARGB);
+    private static final Image NULL_IMAGE = new BufferedImage(11, 11, BufferedImage.TYPE_INT_ARGB);
 
-    private final int Square_Width = 100;
+    private final int Square_Width = 110;
     public ArrayList<Piece> White_Pieces;
     public ArrayList<Piece> Black_Pieces;
     
@@ -61,39 +62,39 @@ public final class Board extends JPanel {
 
         White_Pieces.add(new King(3,0,true,"King.png",this, 31));
         whiteKing = getPiece(3,0);
-        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
+//        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
         White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
-        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
-        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
-        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
-        White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
-        White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
-        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
+//        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
+//        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
+//        White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
+//        White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
+//        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
 
         Black_Pieces.add(new King(3,7,false,"King.png",this, 31));
         blackKing = getPiece(3, 7);
         Black_Pieces.add(new Queen(4,7,false,"Queen.png",this, 8));
         Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
-        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
-        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
-        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
-        Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
-        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
-        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(2,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(3,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(4,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
+//        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
+//        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
+//        Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
+//        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
+//        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(2,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(3,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(4,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
 
     }
 
@@ -110,14 +111,14 @@ public final class Board extends JPanel {
         initGrid();
 
         this.setBackground(new Color(120,13,84));
-        this.setPreferredSize(new Dimension(800, 800));
-        this.setMinimumSize(new Dimension(100, 100));
-        this.setMaximumSize(new Dimension(1000, 1000));
+        this.setPreferredSize(new Dimension(880, 880));
+        this.setMinimumSize(new Dimension(880, 880));
+        this.setMaximumSize(new Dimension(880, 880));
 
         this.addMouseListener(mouseAdapter);
         this.addComponentListener(componentAdapter);
         this.addKeyListener(keyAdapter);
-
+        this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
         
         this.setVisible(true);
@@ -132,13 +133,13 @@ public final class Board extends JPanel {
         Static_Shapes.clear();
         
         Image board = loadImage(board_file_path);
-        Static_Shapes.add(new DrawingImage(board, new Rectangle2D.Double(0, 0, board.getWidth(null)*1.539, board.getHeight(null)*1.539)));
+        Static_Shapes.add(new DrawingImage(board, new Rectangle2D.Double(0, 0, 880, 880)));
         
         //recolor square currently clicked
         if (Active_Piece != null)
         {
             Image active_square = loadImage("images" + File.separator + "active_square.png");
-            Static_Shapes.add(new DrawingImage(active_square, new Rectangle2D.Double(Square_Width*Active_Piece.getX(),Square_Width*Active_Piece.getY(), active_square.getWidth(null)*1.539, active_square.getHeight(null)*1.539)));
+            Static_Shapes.add(new DrawingImage(active_square, new Rectangle2D.Double(Square_Width*Active_Piece.getX(),Square_Width*Active_Piece.getY(), 110, 110)));
         }
         
         //drawings all of each sides pieces on each iteration
@@ -234,12 +235,13 @@ public final class Board extends JPanel {
     
     private void recordMove(Piece lastRemoved, Piece lastMoved){
         if(lastRemoved == null){
-            this.moves.add(files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "->" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
+            this.moves.add(turnCounter + ". " + files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "->" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
         }
         else{
-            this.moves.add(files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "X" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
+            this.moves.add(turnCounter + ". " + files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "X" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
         }
         gameUI.updateHistory(this.moves);
+        
     }
         
     public ArrayList<String> getMoves(){
@@ -354,6 +356,13 @@ public final class Board extends JPanel {
                 {
                     Pawn castedPawn = (Pawn)(Active_Piece);
                     castedPawn.setHasMoved(true);
+                    fiftyMovesCounter = 0;
+                }
+                else if(lastRemoved != null){
+                    fiftyMovesCounter = 0;
+                }
+                else{
+                    fiftyMovesCounter++;
                 }
                 
                 Active_Piece = null;
@@ -416,7 +425,7 @@ public final class Board extends JPanel {
                         recordMove(lastRemoved, lastMoved);
                         if(!whiteKing.checkMateScan()){
                             try {
-                                gameUI.gameOver(false);
+                                gameUI.gameOver(-1, "Checkmate");
                             } catch (IOException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                             } catch (ClassNotFoundException ex) {
@@ -439,7 +448,7 @@ public final class Board extends JPanel {
                         recordMove(lastRemoved, lastMoved);
                         if(!blackKing.checkMateScan()){
                             try {
-                                gameUI.gameOver(true);
+                                gameUI.gameOver(1, "Checkmate");
                             } catch (IOException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                             } catch (ClassNotFoundException ex) {
@@ -453,8 +462,43 @@ public final class Board extends JPanel {
                 }
                 
             }
-            
+            try {
+                        checkEndgames();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
             drawBoard();
+        }
+        
+        private void checkEndgames() throws IOException, FileNotFoundException, ClassNotFoundException{
+            lackOfMaterial();
+            fiftyMovesRule();
+            
+        }
+        
+        private void fiftyMovesRule() throws IOException, FileNotFoundException, ClassNotFoundException{
+            if(fiftyMovesCounter >= 100){
+                gameUI.gameOver(0, "50 Moves Rule");
+            }
+        }
+        
+        private void lackOfMaterial() throws IOException, FileNotFoundException, ClassNotFoundException{
+            String[] noMaterialTypes = {"K", "KB", "KN"};
+            
+            String pieces = "";
+            for(int x=0; x<White_Pieces.size(); x++){
+                pieces += White_Pieces.get(x).getNotationName();
+            }
+            
+            if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
+                pieces = "";
+                for(int x=0; x<Black_Pieces.size(); x++){
+                    pieces += Black_Pieces.get(x).getNotationName();
+                }
+                if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
+                    gameUI.gameOver(0, "Lack Of Material");
+                }
+            }
         }
 
         @Override

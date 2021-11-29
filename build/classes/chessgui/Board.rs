@@ -1,3 +1,0 @@
-chessgui.Board
-chessgui.DrawingShape
-chessgui.DrawingImage
