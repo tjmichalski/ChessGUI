@@ -63,7 +63,7 @@ public final class Board extends JPanel {
         White_Pieces.add(new King(3,0,true,"King.png",this, 31));
         whiteKing = getPiece(3,0);
 //        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
-        White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
+//        White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
 //        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
 //        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
 //        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
@@ -81,11 +81,11 @@ public final class Board extends JPanel {
         Black_Pieces.add(new King(3,7,false,"King.png",this, 31));
         blackKing = getPiece(3, 7);
         Black_Pieces.add(new Queen(4,7,false,"Queen.png",this, 8));
-        Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
+//        Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
 //        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
 //        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
 //        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
-//        Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
+        Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
 //        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
 //        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
 //        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
@@ -473,7 +473,21 @@ public final class Board extends JPanel {
         private void checkEndgames() throws IOException, FileNotFoundException, ClassNotFoundException{
             lackOfMaterial();
             fiftyMovesRule();
+            staleMate();
+            repetition();
+        }
+        
+        private void repetition()throws IOException, FileNotFoundException, ClassNotFoundException{
             
+        }
+        
+        private void staleMate() throws IOException, FileNotFoundException, ClassNotFoundException{
+            if(!blackKing.checkMateScan()){
+                gameUI.gameOver(0, "Stalemate");
+            }
+            else if(!whiteKing.checkMateScan()){
+                gameUI.gameOver(0, "Stalemate");
+            }
         }
         
         private void fiftyMovesRule() throws IOException, FileNotFoundException, ClassNotFoundException{

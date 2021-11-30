@@ -59,6 +59,7 @@ public class GameUI extends javax.swing.JPanel {
         this.increment = increment;
         WhiteTimeField.setText(gameTime + "m 00s");
         BlackTimeField.setText(gameTime + "m 00s");
+        MovesHistory.setEditable(false);
     }
     
     public void startClock(int gameTime){
@@ -181,12 +182,16 @@ public class GameUI extends javax.swing.JPanel {
     }
     
     public void gameOver(int isWhite, String method) throws IOException, FileNotFoundException, ClassNotFoundException{
+        blackTimer.stop();
+        whiteTimer.stop();
         BoardPanel.remove(board);
         BoardPanel.repaint();
         BoardPanel.add(new GameOver(method, isWhite, mainFrame));
         boardLayout.setAlignment(FlowLayout.CENTER);
         mainFrame.pack();
         mainFrame.recordGame(board.getMoves());
+        ResignButton.setEnabled(false);
+        MuteButton.setEnabled(false);
     }
 
     /**
@@ -203,7 +208,7 @@ public class GameUI extends javax.swing.JPanel {
         ResignButton = new javax.swing.JButton();
         WhiteTimeField = new javax.swing.JTextField();
         BlackTimeField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        MuteButton = new javax.swing.JButton();
         BlackCapturePanel = new javax.swing.JPanel();
         WhiteCapturePanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
@@ -229,7 +234,7 @@ public class GameUI extends javax.swing.JPanel {
             .addGap(0, 885, Short.MAX_VALUE)
         );
 
-        SidePanel.setBackground(new java.awt.Color(238, 238, 238));
+        SidePanel.setBackground(new java.awt.Color(88, 88, 88));
         SidePanel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
         SidePanel.setPreferredSize(new java.awt.Dimension(256, 885));
 
@@ -246,10 +251,10 @@ public class GameUI extends javax.swing.JPanel {
         BlackTimeField.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         BlackTimeField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        jButton1.setText("Mute");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        MuteButton.setText("Mute");
+        MuteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                MuteButtonActionPerformed(evt);
             }
         });
 
@@ -322,7 +327,7 @@ public class GameUI extends javax.swing.JPanel {
             .addGroup(SidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(SidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(MuteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ResignButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
                     .addComponent(WhiteTimeField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(BlackTimeField)
@@ -345,7 +350,7 @@ public class GameUI extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BlackTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(MuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(ResignButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
                 .addContainerGap())
@@ -394,9 +399,9 @@ public class GameUI extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_ResignButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void MuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MuteButtonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_MuteButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -404,11 +409,11 @@ public class GameUI extends javax.swing.JPanel {
     private javax.swing.JTextField BlackTimeField;
     private javax.swing.JPanel BoardPanel;
     private javax.swing.JTextArea MovesHistory;
+    private javax.swing.JButton MuteButton;
     private javax.swing.JButton ResignButton;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JPanel WhiteCapturePanel;
     private javax.swing.JTextField WhiteTimeField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;

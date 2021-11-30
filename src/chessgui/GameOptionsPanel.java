@@ -5,6 +5,8 @@
  */
 package chessgui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,6 +34,7 @@ public class GameOptionsPanel extends javax.swing.JPanel {
         incrementTime.add(FiveSecButton);
         incrementTime.add(TenSecButton);
         incrementTime.add(ThirtySecButton);
+        
     }
 
     /**
@@ -72,11 +75,12 @@ public class GameOptionsPanel extends javax.swing.JPanel {
             }
         });
 
-        jPanel1.setBackground(new java.awt.Color(238, 238, 238));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         ZeroSecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         ZeroSecButton.setText("0 Seconds");
+        ZeroSecButton.setOpaque(false);
         ZeroSecButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ZeroSecButtonActionPerformed(evt);
@@ -85,12 +89,15 @@ public class GameOptionsPanel extends javax.swing.JPanel {
 
         FiveSecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         FiveSecButton.setText("5 Seconds");
+        FiveSecButton.setOpaque(false);
 
         TenSecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         TenSecButton.setText("10 Seconds");
+        TenSecButton.setOpaque(false);
 
         ThirtySecButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         ThirtySecButton.setText("30 Seconds");
+        ThirtySecButton.setOpaque(false);
 
         IncrementLabel.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         IncrementLabel.setText("Select time increment on move:");
@@ -106,9 +113,11 @@ public class GameOptionsPanel extends javax.swing.JPanel {
 
         TwentyMinButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         TwentyMinButton.setText("20 Minutes");
+        TwentyMinButton.setOpaque(false);
 
         ThirtyMinButton.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         ThirtyMinButton.setText("30 Minutes");
+        ThirtyMinButton.setOpaque(false);
 
         TimeLabel.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         TimeLabel.setText("Select Starting Gametime:");
@@ -156,7 +165,7 @@ public class GameOptionsPanel extends javax.swing.JPanel {
                     .addComponent(FiveSecButton)
                     .addComponent(TenSecButton)
                     .addComponent(ThirtySecButton))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -168,17 +177,17 @@ public class GameOptionsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(ComputerButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(MultiplayerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(ComputerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 287, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(MultiplayerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 93, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ComputerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(MultiplayerButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
