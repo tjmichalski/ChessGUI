@@ -32,7 +32,7 @@ public class GameOver extends javax.swing.JPanel {
         this.isWhite = isWhite;
         this.mainFrame = mainFrame;
         this.method = method;
-        this.background = ImageIO.read(new File("images/board.png"));
+        this.background = ImageIO.read(new File("images/" + mainFrame.boardName));
         this.background = background.getScaledInstance(880, 880, Image.SCALE_SMOOTH);
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         GameOptionsPanel panel = new GameOptionsPanel(mainFrame);

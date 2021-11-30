@@ -43,7 +43,9 @@ public final class Board extends JPanel {
     private final int rows = 8;
     private final int cols = 8;
     private Integer[][] BoardGrid;
-    private String board_file_path = "images" + File.separator + "board.png";
+    public String boardName;
+    public String piecesName;
+    private String board_file_path = "images" + File.separator;
     private String active_square_file_path = "images" + File.separator + "active_square.png";
     
     private final String[] files = {"H", "G", "F", "E", "D", "C", "B", "A"};
@@ -62,45 +64,46 @@ public final class Board extends JPanel {
 
         White_Pieces.add(new King(3,0,true,"King.png",this, 31));
         whiteKing = getPiece(3,0);
-//        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
-//        White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
-//        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
-//        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
-//        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
-//        White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
-//        White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
-//        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
-//        White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
+        White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
+        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
+        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
+        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
+        White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
+        White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
+        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
 
         Black_Pieces.add(new King(3,7,false,"King.png",this, 31));
         blackKing = getPiece(3, 7);
         Black_Pieces.add(new Queen(4,7,false,"Queen.png",this, 8));
-//        Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
-//        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
-//        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
-//        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
+        Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
+        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
+        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
+        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
         Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
-//        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
-//        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(2,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(3,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(4,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
-//        Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
+        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(2,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(3,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(4,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
+        Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
 
     }
 
-    public Board(GameUI gameUI) {
-
+    public Board(GameUI gameUI, String boardName, String piecesName) {
         this.gameUI = gameUI;
+        this.boardName = boardName;
+        this.piecesName = piecesName;
         BoardGrid = new Integer[rows][cols];
         Static_Shapes = new ArrayList();
         Piece_Graphics = new ArrayList();
@@ -132,7 +135,7 @@ public final class Board extends JPanel {
         Piece_Graphics.clear();
         Static_Shapes.clear();
         
-        Image board = loadImage(board_file_path);
+        Image board = loadImage(this.board_file_path+boardName);
         Static_Shapes.add(new DrawingImage(board, new Rectangle2D.Double(0, 0, 880, 880)));
         
         //recolor square currently clicked
@@ -147,14 +150,16 @@ public final class Board extends JPanel {
         {
             int COL = White_Pieces.get(i).getX();
             int ROW = White_Pieces.get(i).getY();
-            Image piece = loadImage("images" + File.separator + "white_pieces" + File.separator + White_Pieces.get(i).getFilePath());  
+            Image piece = loadImage("images" + File.separator + "white_pieces" + piecesName + File.separator + White_Pieces.get(i).getFilePath()); 
+            piece = piece.getScaledInstance(80, 80, Image.SCALE_SMOOTH);
             Piece_Graphics.add(new DrawingImage(piece, new Rectangle2D.Double(Square_Width*COL,Square_Width*ROW, piece.getWidth(null), piece.getHeight(null))));
         }
         for (int i = 0; i < Black_Pieces.size(); i++)
         {
             int COL = Black_Pieces.get(i).getX();
             int ROW = Black_Pieces.get(i).getY();
-            Image piece = loadImage("images" + File.separator + "black_pieces" + File.separator + Black_Pieces.get(i).getFilePath());  
+            Image piece = loadImage("images" + File.separator + "black_pieces" + piecesName + File.separator + Black_Pieces.get(i).getFilePath()); 
+            piece = piece.getScaledInstance(80, 80, Image.SCALE_SMOOTH);
             Piece_Graphics.add(new DrawingImage(piece, new Rectangle2D.Double(Square_Width*COL,Square_Width*ROW, piece.getWidth(null), piece.getHeight(null))));
         }
         
@@ -482,10 +487,30 @@ public final class Board extends JPanel {
         }
         
         private void staleMate() throws IOException, FileNotFoundException, ClassNotFoundException{
-            if(!blackKing.checkMateScan()){
+            if(!blackKing.checkMateScan() && turnCounter%2 == 1){
+                for(int n=1; n<Black_Pieces.size(); n++){
+                    for(int x=0; x<8; x++){
+                        for(int y=0; y<8; y++){
+                            if(Black_Pieces.get(n).canMove(x, y) > 0){
+                                return;
+                            }
+                        }
+                    }
+                }
+                
                 gameUI.gameOver(0, "Stalemate");
             }
-            else if(!whiteKing.checkMateScan()){
+            else if(!whiteKing.checkMateScan() && turnCounter%2==0){
+                for(int n=1; n<White_Pieces.size(); n++){
+                    for(int x=0; x<8; x++){
+                        for(int y=0; y<8; y++){
+                            if(White_Pieces.get(n).canMove(x, y) > 0){
+                                return;
+                            }
+                        }
+                    }
+                }
+                
                 gameUI.gameOver(0, "Stalemate");
             }
         }

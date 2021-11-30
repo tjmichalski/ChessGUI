@@ -204,28 +204,28 @@ public class GameOptionsPanel extends javax.swing.JPanel {
         if(ThirtyMinButton.isSelected()){
             if(ZeroSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 0));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 0, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(FiveSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 5));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 5, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(TenSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 10));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 10, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(ThirtySecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 30));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 30, 30, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -234,28 +234,28 @@ public class GameOptionsPanel extends javax.swing.JPanel {
         else if(TwentyMinButton.isSelected()){
             if(ZeroSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 0));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 0, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(FiveSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 5));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 5, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(TenSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 10));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 10, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(ThirtySecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 30));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 20, 30, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -264,28 +264,28 @@ public class GameOptionsPanel extends javax.swing.JPanel {
         else if(TenMinButton.isSelected()){
             if(ZeroSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 0));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 0, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(FiveSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 5));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 5, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(TenSecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 10));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 10, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             else if(ThirtySecButton.isSelected()){
                 try {
-                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 30));
+                    mainFrame.setNewPanel(new GameUI(mainFrame, 10, 30, mainFrame.boardName, mainFrame.piecesName));
                 } catch (IOException ex) {
                     Logger.getLogger(GameOptionsPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }

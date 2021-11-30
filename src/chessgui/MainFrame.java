@@ -27,6 +27,9 @@ public class MainFrame extends JFrame {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     
+    public String boardName;
+    public String piecesName;
+    
     public MainFrame()
     {
         this.setTitle("Chess");
@@ -39,6 +42,8 @@ public class MainFrame extends JFrame {
         this.setLocation(200, 50);
         this.pack();
         this.setVisible(true);
+        this.boardName = "board.png";
+        this.piecesName = "";
     }
     
     public void setNewPanel(JPanel newPanel){
@@ -81,4 +86,6 @@ public class MainFrame extends JFrame {
         
         return allGamesHistory;
     }
+    
+    
 }

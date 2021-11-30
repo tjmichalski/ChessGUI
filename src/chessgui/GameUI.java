@@ -43,10 +43,10 @@ public class GameUI extends javax.swing.JPanel {
     
     private final int increment;
     
-    public GameUI(MainFrame mainFrame, int gameTime, int increment) throws IOException {
+    public GameUI(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName) throws IOException {
         initComponents();
         this.mainFrame = mainFrame;
-        this.board = new Board(this);
+        this.board = new Board(this, boardName, piecesName);
         BoardPanel.add(board);
         boardLayout = new FlowLayout();
         BoardPanel.setLayout(boardLayout);
