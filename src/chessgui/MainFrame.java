@@ -29,7 +29,6 @@ public class MainFrame extends JFrame {
     
     public MainFrame()
     {
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setTitle("Chess");
         this.setResizable(false);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -5,15 +5,20 @@
  */
 package chessgui;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 
 /**
@@ -25,12 +30,21 @@ public class SettingsPanel extends javax.swing.JPanel {
     private DefaultListModel allHistoryList, gameHistoryList;
     private MainFrame mainFrame;
     private ArrayList<ArrayList <String>> gamesHistory;
+    private Image board1, board2, board3, pieces1, pieces2, pieces3;
+    private FlowLayout boardsLayout, piecesLayout;
+    private JLabel B1Label, B2Label, B3Label, P1Label, P2Label, P3Label;
+    private ButtonGroup boardsGroup, piecesGroup;
     
-    public SettingsPanel(MainFrame mainFrame) throws IOException, FileNotFoundException, ClassNotFoundException {
+    public SettingsPanel(MainFrame mainFrame) throws IOException, FileNotFoundException, ClassNotFoundException{
         initComponents();
         this.mainFrame = mainFrame;
         this.gamesHistory = mainFrame.getAllHistory();
         this.allHistoryList = new DefaultListModel();
+        
+        this.boardsGroup = new ButtonGroup();
+        this.boardsGroup.add(Board1Button);
+        this.boardsGroup.add(Board2Button);
+        this.boardsGroup.add(Board3Button);
         
         for(int x=0; x < gamesHistory.size(); x++){
             allHistoryList.addElement(gamesHistory.get(x));
@@ -38,6 +52,32 @@ public class SettingsPanel extends javax.swing.JPanel {
         HistoryList = new JList(allHistoryList);
         HistoryListPane.setViewportView(HistoryList);
         HistoryList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        
+        createImages();
+    }
+    
+    private void createImages() throws IOException{
+        this.boardsLayout = new FlowLayout();
+        this.boardsLayout.setHgap(5);
+        this.BoardPanel.setLayout(boardsLayout);
+        
+        board1 = ImageIO.read(new File("images/board.png"));
+        board2 = ImageIO.read(new File("images/board2.png"));
+        board3 = ImageIO.read(new File("images/board3.png"));
+        
+        this.board1 = board1.getScaledInstance(125, 125, BufferedImage.SCALE_SMOOTH);
+        this.board2 = board2.getScaledInstance(125, 125, BufferedImage.SCALE_SMOOTH);
+        this.board3 = board3.getScaledInstance(125, 125, BufferedImage.SCALE_SMOOTH);
+        
+        B1Label = new JLabel(new ImageIcon(board1));
+        B2Label = new JLabel(new ImageIcon(board2));
+        B3Label = new JLabel(new ImageIcon(board3));
+        
+        BoardPanel.add(B1Label);
+        BoardPanel.add(B2Label);
+        BoardPanel.add(B3Label);
+        
+        
     }
 
     /**
@@ -50,21 +90,20 @@ public class SettingsPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
+        BackButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        Board1 = new javax.swing.JToggleButton();
-        Board3 = new javax.swing.JToggleButton();
-        Board2 = new javax.swing.JToggleButton();
+        Board1Button = new javax.swing.JToggleButton();
+        Board2Button = new javax.swing.JToggleButton();
+        Board3Button = new javax.swing.JToggleButton();
         jLabel3 = new javax.swing.JLabel();
-        Pieces3 = new javax.swing.JToggleButton();
-        Pieces2 = new javax.swing.JToggleButton();
-        Pieces1 = new javax.swing.JToggleButton();
+        BoardPanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         ExpandButton = new javax.swing.JButton();
         HistoryPanel = new javax.swing.JPanel();
         HistoryListPane = new javax.swing.JScrollPane();
         HistoryList = new javax.swing.JList<>();
-        BackButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(88, 88, 88));
         setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
@@ -73,29 +112,46 @@ public class SettingsPanel extends javax.swing.JPanel {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Settings");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        BackButton.setText("Back");
+        BackButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         jLabel2.setText("Choose Board:");
 
-        Board1.setText("jToggleButton1");
-        Board1.setPreferredSize(new java.awt.Dimension(100, 100));
+        Board1Button.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        Board1Button.setText("Board 1");
+        Board1Button.setPreferredSize(new java.awt.Dimension(100, 100));
+        Board1Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Board1ButtonActionPerformed(evt);
+            }
+        });
 
-        Board3.setText("jToggleButton1");
-        Board3.setPreferredSize(new java.awt.Dimension(100, 100));
+        Board2Button.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        Board2Button.setText("Board 2");
+        Board2Button.setPreferredSize(new java.awt.Dimension(100, 100));
 
-        Board2.setText("jToggleButton1");
-        Board2.setPreferredSize(new java.awt.Dimension(100, 100));
+        Board3Button.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        Board3Button.setText("Board 3");
+        Board3Button.setPreferredSize(new java.awt.Dimension(100, 100));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Choose Pieces:");
 
-        Pieces3.setText("jToggleButton1");
-        Pieces3.setPreferredSize(new java.awt.Dimension(100, 100));
-
-        Pieces2.setText("jToggleButton1");
-        Pieces2.setPreferredSize(new java.awt.Dimension(100, 100));
-
-        Pieces1.setText("jToggleButton1");
-        Pieces1.setPreferredSize(new java.awt.Dimension(100, 100));
+        javax.swing.GroupLayout BoardPanelLayout = new javax.swing.GroupLayout(BoardPanel);
+        BoardPanel.setLayout(BoardPanelLayout);
+        BoardPanelLayout.setHorizontalGroup(
+            BoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 378, Short.MAX_VALUE)
+        );
+        BoardPanelLayout.setVerticalGroup(
+            BoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 139, Short.MAX_VALUE)
+        );
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setText("Games History:");
@@ -119,11 +175,13 @@ public class SettingsPanel extends javax.swing.JPanel {
         HistoryPanel.setLayout(HistoryPanelLayout);
         HistoryPanelLayout.setHorizontalGroup(
             HistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(HistoryListPane, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+            .addComponent(HistoryListPane, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
         );
         HistoryPanelLayout.setVerticalGroup(
             HistoryPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(HistoryListPane, javax.swing.GroupLayout.DEFAULT_SIZE, 212, Short.MAX_VALUE)
+            .addGroup(HistoryPanelLayout.createSequentialGroup()
+                .addComponent(HistoryListPane, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -144,17 +202,51 @@ public class SettingsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(HistoryPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(ExpandButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        BackButton.setText("Back");
-        BackButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                BackButtonActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(BoardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(Board1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Board2Button, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(Board3Button, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Board1Button, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Board2Button, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Board3Button, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(BoardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(317, 317, 317))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -166,25 +258,8 @@ public class SettingsPanel extends javax.swing.JPanel {
                     .addComponent(BackButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(Board1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(Board2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(Pieces1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(Pieces2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(Pieces3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(Board3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -192,25 +267,10 @@ public class SettingsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(Board1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Board3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Board2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(Pieces3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Pieces2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(Pieces1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(BackButton, javax.swing.GroupLayout.DEFAULT_SIZE, 28, Short.MAX_VALUE)
+                .addGap(9, 9, 9)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 405, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BackButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -239,23 +299,26 @@ public class SettingsPanel extends javax.swing.JPanel {
         
     }//GEN-LAST:event_ExpandButtonActionPerformed
 
+    private void Board1ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Board1ButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Board1ButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BackButton;
-    private javax.swing.JToggleButton Board1;
-    private javax.swing.JToggleButton Board2;
-    private javax.swing.JToggleButton Board3;
+    private javax.swing.JToggleButton Board1Button;
+    private javax.swing.JToggleButton Board2Button;
+    private javax.swing.JToggleButton Board3Button;
+    private javax.swing.JPanel BoardPanel;
     private javax.swing.JButton ExpandButton;
     private javax.swing.JList<String> HistoryList;
     private javax.swing.JScrollPane HistoryListPane;
     private javax.swing.JPanel HistoryPanel;
-    private javax.swing.JToggleButton Pieces1;
-    private javax.swing.JToggleButton Pieces2;
-    private javax.swing.JToggleButton Pieces3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     // End of variables declaration//GEN-END:variables
 }
