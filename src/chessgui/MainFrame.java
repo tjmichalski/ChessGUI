@@ -29,6 +29,7 @@ public class MainFrame extends JFrame {
     
     public String boardName;
     public String piecesName;
+    public Boolean isMute;
     
     public MainFrame()
     {
@@ -44,6 +45,7 @@ public class MainFrame extends JFrame {
         this.setVisible(true);
         this.boardName = "board.png";
         this.piecesName = "";
+        this.isMute = false;
     }
     
     public void setNewPanel(JPanel newPanel){

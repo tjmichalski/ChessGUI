@@ -10,6 +10,11 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 
 //what is this?
@@ -20,6 +25,7 @@ public final class Board extends JPanel {
     public int turnCounter = 0;
     public int fiftyMovesCounter = 0;
     private ArrayList<String> moves;
+    private MainFrame mainFrame;
 
     private static final Image NULL_IMAGE = new BufferedImage(11, 11, BufferedImage.TYPE_INT_ARGB);
 
@@ -65,45 +71,46 @@ public final class Board extends JPanel {
         White_Pieces.add(new King(3,0,true,"King.png",this, 31));
         whiteKing = getPiece(3,0);
         White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
-        White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
-        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
-        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
-        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
-        White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
-        White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
-        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
+//        White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
+//        White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
+//        White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
+//        White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
+//        White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
+//        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
+//        White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
 
         Black_Pieces.add(new King(3,7,false,"King.png",this, 31));
         blackKing = getPiece(3, 7);
         Black_Pieces.add(new Queen(4,7,false,"Queen.png",this, 8));
-        Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
-        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
-        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
-        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
-        Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
-        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
-        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(2,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(3,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(4,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
-        Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Bishop(2,7,false,"Bishop.png",this, 3));
+//        Black_Pieces.add(new Bishop(5,7,false,"Bishop.png",this, 3));
+//        Black_Pieces.add(new Knight(1,7,false,"Knight.png",this, 3));
+//        Black_Pieces.add(new Knight(6,7,false,"Knight.png",this, 3));
+//        Black_Pieces.add(new Rook(0,7,false,"Rook.png",this, 5));
+//        Black_Pieces.add(new Rook(7,7,false,"Rook.png",this, 5));
+//        Black_Pieces.add(new Pawn(0,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(1,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(2,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(3,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(4,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
+//        Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
 
     }
 
-    public Board(GameUI gameUI, String boardName, String piecesName) {
+    public Board(GameUI gameUI, String boardName, String piecesName, MainFrame mainFrame) {
         this.gameUI = gameUI;
         this.boardName = boardName;
         this.piecesName = piecesName;
+        this.mainFrame = mainFrame;
         BoardGrid = new Integer[rows][cols];
         Static_Shapes = new ArrayList();
         Piece_Graphics = new ArrayList();
@@ -275,6 +282,85 @@ public final class Board extends JPanel {
         gameUI.switchTimers();
         lastMoved = null;
         turnCounter--;
+        try {
+            playSound("sounds/undo.wav");
+        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void checkEndgames() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
+        lackOfMaterial();
+        fiftyMovesRule();
+        staleMate();
+        repetition();
+    }
+
+    private void repetition()throws IOException, FileNotFoundException, ClassNotFoundException{
+
+    }
+
+    private void staleMate() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
+        if(!blackKing.checkMateScan() && turnCounter%2 == 1){
+            for(int n=1; n<Black_Pieces.size(); n++){
+                for(int x=0; x<8; x++){
+                    for(int y=0; y<8; y++){
+                        if(Black_Pieces.get(n).canMove(x, y) > 0){
+                            return;
+                        }
+                    }
+                }
+            }
+
+            try {
+                playSound("gameover/take.wav");
+            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            gameUI.gameOver(0, "Stalemate");
+        }
+        else if(!whiteKing.checkMateScan() && turnCounter%2==0){
+            for(int n=1; n<White_Pieces.size(); n++){
+                for(int x=0; x<8; x++){
+                    for(int y=0; y<8; y++){
+                        if(White_Pieces.get(n).canMove(x, y) > 0){
+                            return;
+                        }
+                    }
+                }
+            }
+            try {
+                playSound("gameover/take.wav");
+            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            gameUI.gameOver(0, "Stalemate");
+        }
+    }
+
+    private void fiftyMovesRule() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
+        if(fiftyMovesCounter >= 100){
+            gameUI.gameOver(0, "50 Moves Rule");
+        }
+    }
+
+    private void lackOfMaterial() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
+        String[] noMaterialTypes = {"K", "KB", "KN"};
+
+        String pieces = "";
+        for(int x=0; x<White_Pieces.size(); x++){
+            pieces += White_Pieces.get(x).getNotationName();
+        }
+
+        if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
+            pieces = "";
+            for(int x=0; x<Black_Pieces.size(); x++){
+                pieces += Black_Pieces.get(x).getNotationName();
+            }
+            if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
+                gameUI.gameOver(0, "Lack Of Material");
+            }
+        }
     }
     
     private MouseAdapter mouseAdapter = new MouseAdapter() {
@@ -344,6 +430,11 @@ public final class Board extends JPanel {
                             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    try {
+                        playSound("sounds/take.wav");
+                    } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 else{
                     lastRemoved = null;
@@ -353,8 +444,6 @@ public final class Board extends JPanel {
                 Active_Piece.setY(Clicked_Row);
                 lastMoved = Active_Piece;
                 gameUI.switchTimers();
-                
-                
                 
                 // if piece is a pawn set has_moved to true
                 if (Active_Piece.getClass().equals(Pawn.class))
@@ -431,9 +520,14 @@ public final class Board extends JPanel {
                         if(!whiteKing.checkMateScan()){
                             try {
                                 gameUI.gameOver(-1, "Checkmate");
-                            } catch (IOException ex) {
+                            } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (ClassNotFoundException ex) {
+                            }
+                        }
+                        else{
+                            try {
+                                playSound("sounds/check.wav");
+                            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
@@ -454,90 +548,35 @@ public final class Board extends JPanel {
                         if(!blackKing.checkMateScan()){
                             try {
                                 gameUI.gameOver(1, "Checkmate");
-                            } catch (IOException ex) {
+                            } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            } catch (ClassNotFoundException ex) {
+                            }
+                        }
+                        else{
+                            try {
+                                playSound("sounds/check.wav");
+                            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     }
                 }
                 else{
+                    try {
+                        playSound("sounds/move.wav");
+                    } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     recordMove(lastRemoved, lastMoved);
                 }
                 
             }
             try {
                         checkEndgames();
-                    } catch (IOException | ClassNotFoundException ex) {
+                    } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                         Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                     }
             drawBoard();
-        }
-        
-        private void checkEndgames() throws IOException, FileNotFoundException, ClassNotFoundException{
-            lackOfMaterial();
-            fiftyMovesRule();
-            staleMate();
-            repetition();
-        }
-        
-        private void repetition()throws IOException, FileNotFoundException, ClassNotFoundException{
-            
-        }
-        
-        private void staleMate() throws IOException, FileNotFoundException, ClassNotFoundException{
-            if(!blackKing.checkMateScan() && turnCounter%2 == 1){
-                for(int n=1; n<Black_Pieces.size(); n++){
-                    for(int x=0; x<8; x++){
-                        for(int y=0; y<8; y++){
-                            if(Black_Pieces.get(n).canMove(x, y) > 0){
-                                return;
-                            }
-                        }
-                    }
-                }
-                
-                gameUI.gameOver(0, "Stalemate");
-            }
-            else if(!whiteKing.checkMateScan() && turnCounter%2==0){
-                for(int n=1; n<White_Pieces.size(); n++){
-                    for(int x=0; x<8; x++){
-                        for(int y=0; y<8; y++){
-                            if(White_Pieces.get(n).canMove(x, y) > 0){
-                                return;
-                            }
-                        }
-                    }
-                }
-                
-                gameUI.gameOver(0, "Stalemate");
-            }
-        }
-        
-        private void fiftyMovesRule() throws IOException, FileNotFoundException, ClassNotFoundException{
-            if(fiftyMovesCounter >= 100){
-                gameUI.gameOver(0, "50 Moves Rule");
-            }
-        }
-        
-        private void lackOfMaterial() throws IOException, FileNotFoundException, ClassNotFoundException{
-            String[] noMaterialTypes = {"K", "KB", "KN"};
-            
-            String pieces = "";
-            for(int x=0; x<White_Pieces.size(); x++){
-                pieces += White_Pieces.get(x).getNotationName();
-            }
-            
-            if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
-                pieces = "";
-                for(int x=0; x<Black_Pieces.size(); x++){
-                    pieces += Black_Pieces.get(x).getNotationName();
-                }
-                if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
-                    gameUI.gameOver(0, "Lack Of Material");
-                }
-            }
         }
 
         @Override
@@ -555,6 +594,18 @@ public final class Board extends JPanel {
 
         
     };
+    
+    private void playSound(String fileName) throws LineUnavailableException, UnsupportedAudioFileException, IOException{
+            if(!mainFrame.isMute){
+                File file = new File(fileName);
+                Clip clip = AudioSystem.getClip();
+
+                AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+                clip.open(ais);
+                clip.start(); 
+            }
+            
+    }
         
       
     private Image loadImage(String imageFile) {

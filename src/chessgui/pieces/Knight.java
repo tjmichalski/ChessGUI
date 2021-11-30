@@ -1,7 +1,10 @@
 package chessgui.pieces;
 
 import chessgui.Board;
+import java.awt.Point;
+import java.awt.geom.Point2D;
 import static java.lang.Math.abs;
+import java.util.ArrayList;
 
 public class Knight extends Piece {
 
@@ -37,5 +40,12 @@ public class Knight extends Piece {
         else{
             return -1;
         }
+    }
+    @Override
+    public ArrayList<Point2D> findAttackSquares(int kingX, int kingY) {
+        ArrayList attackSquares = new ArrayList();
+        attackSquares.add(new Point(getX(), getY()));
+        
+        return attackSquares;
     }
 }

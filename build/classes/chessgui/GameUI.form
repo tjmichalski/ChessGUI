@@ -94,13 +94,13 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="MuteButton" alignment="1" max="32767" attributes="0"/>
                       <Component id="ResignButton" alignment="1" pref="232" max="32767" attributes="0"/>
                       <Component id="WhiteTimeField" alignment="1" max="32767" attributes="0"/>
                       <Component id="BlackTimeField" alignment="0" max="32767" attributes="0"/>
                       <Component id="BlackCapturePanel" alignment="0" pref="232" max="32767" attributes="0"/>
                       <Component id="WhiteCapturePanel" alignment="0" pref="232" max="32767" attributes="0"/>
                       <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+                      <Component id="MuteButton" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -119,10 +119,10 @@
                   <Component id="BlackCapturePanel" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="BlackTimeField" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="MuteButton" min="-2" pref="26" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="ResignButton" pref="25" max="32767" attributes="0"/>
+                  <Component id="MuteButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="ResignButton" pref="40" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -152,14 +152,6 @@
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
           </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="MuteButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Mute"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MuteButtonActionPerformed"/>
-          </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="BlackCapturePanel">
           <Properties>
@@ -280,6 +272,14 @@
             </Container>
           </SubComponents>
         </Container>
+        <Component class="javax.swing.JToggleButton" name="MuteButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Mute"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="MuteButtonActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>

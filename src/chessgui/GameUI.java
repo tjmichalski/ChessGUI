@@ -20,6 +20,12 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
@@ -40,13 +46,15 @@ public class GameUI extends javax.swing.JPanel {
     private LocalDateTime blackStart, whiteStart;
     private Duration blackTimePassed, whiteTimePassed;
     private Timer blackTimer, whiteTimer;
+    private ButtonGroup muteButton;
     
     private final int increment;
     
     public GameUI(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName) throws IOException {
         initComponents();
         this.mainFrame = mainFrame;
-        this.board = new Board(this, boardName, piecesName);
+        this.board = new Board(this, boardName, piecesName, mainFrame);
+        this.muteButton = new ButtonGroup();
         BoardPanel.add(board);
         boardLayout = new FlowLayout();
         BoardPanel.setLayout(boardLayout);
@@ -60,6 +68,11 @@ public class GameUI extends javax.swing.JPanel {
         WhiteTimeField.setText(gameTime + "m 00s");
         BlackTimeField.setText(gameTime + "m 00s");
         MovesHistory.setEditable(false);
+        
+        if(mainFrame.isMute == true){
+            MuteButton.setText("Unmute");
+            MuteButton.setSelected(true);
+        }
     }
     
     public void startClock(int gameTime){
@@ -79,9 +92,7 @@ public class GameUI extends javax.swing.JPanel {
                     timeLeft = Duration.ZERO;
                     try {
                         gameOver(-1, "Timeout");
-                    } catch (IOException ex) {
-                        Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
+                    } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                         Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -103,9 +114,7 @@ public class GameUI extends javax.swing.JPanel {
                     timeLeft = Duration.ZERO;
                     try {
                         gameOver(1, "Timeout");
-                    } catch (IOException ex) {
-                        Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ClassNotFoundException ex) {
+                    } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                         Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -115,6 +124,15 @@ public class GameUI extends javax.swing.JPanel {
         blackTimer.start();
         blackTimer.stop();
         
+    }
+    
+    private void playSound(String fileName) throws LineUnavailableException, UnsupportedAudioFileException, IOException{
+            File file = new File(fileName);
+            Clip clip = AudioSystem.getClip();
+            
+            AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+            clip.open(ais);
+            clip.start();
     }
     
     public void updateHistory(ArrayList<String> moves){
@@ -181,7 +199,11 @@ public class GameUI extends javax.swing.JPanel {
         mainFrame.pack();
     }
     
-    public void gameOver(int isWhite, String method) throws IOException, FileNotFoundException, ClassNotFoundException{
+    public void gameOver(int isWhite, String method) throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
+        if(!mainFrame.isMute){
+           playSound("sounds/gameOver.wav"); 
+        }
+        
         blackTimer.stop();
         whiteTimer.stop();
         BoardPanel.remove(board);
@@ -208,13 +230,13 @@ public class GameUI extends javax.swing.JPanel {
         ResignButton = new javax.swing.JButton();
         WhiteTimeField = new javax.swing.JTextField();
         BlackTimeField = new javax.swing.JTextField();
-        MuteButton = new javax.swing.JButton();
         BlackCapturePanel = new javax.swing.JPanel();
         WhiteCapturePanel = new javax.swing.JPanel();
         jPanel1 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         MovesHistory = new javax.swing.JTextArea();
+        MuteButton = new javax.swing.JToggleButton();
 
         setBackground(new java.awt.Color(169, 169, 169));
 
@@ -250,13 +272,6 @@ public class GameUI extends javax.swing.JPanel {
 
         BlackTimeField.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         BlackTimeField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        MuteButton.setText("Mute");
-        MuteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MuteButtonActionPerformed(evt);
-            }
-        });
 
         BlackCapturePanel.setBackground(new java.awt.Color(238, 238, 238));
         BlackCapturePanel.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 1, true));
@@ -320,6 +335,13 @@ public class GameUI extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        MuteButton.setText("Mute");
+        MuteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MuteButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout SidePanelLayout = new javax.swing.GroupLayout(SidePanel);
         SidePanel.setLayout(SidePanelLayout);
         SidePanelLayout.setHorizontalGroup(
@@ -327,13 +349,13 @@ public class GameUI extends javax.swing.JPanel {
             .addGroup(SidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(SidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(MuteButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(ResignButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
                     .addComponent(WhiteTimeField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(BlackTimeField)
                     .addComponent(BlackCapturePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
                     .addComponent(WhiteCapturePanel, javax.swing.GroupLayout.DEFAULT_SIZE, 232, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(MuteButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         SidePanelLayout.setVerticalGroup(
@@ -349,10 +371,10 @@ public class GameUI extends javax.swing.JPanel {
                 .addComponent(BlackCapturePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BlackTimeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(MuteButton, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(ResignButton, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE)
+                .addComponent(MuteButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ResignButton, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -382,25 +404,29 @@ public class GameUI extends javax.swing.JPanel {
         if(board.turnCounter % 2 == 1){
             try {
                 gameOver(1, "Resignation");
-            } catch (IOException ex) {
-                Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else{
             try {
                 gameOver(-1, "Resignation");
-            } catch (IOException ex) {
-                Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ClassNotFoundException ex) {
+            } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_ResignButtonActionPerformed
 
     private void MuteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MuteButtonActionPerformed
-        // TODO add your handling code here:
+        if(MuteButton.getText().equals("Mute")){
+            MuteButton.setText("Unmute");
+            mainFrame.isMute = true;
+        }
+        else{
+            MuteButton.setText("Mute");
+            mainFrame.isMute = false;
+        }
+        
     }//GEN-LAST:event_MuteButtonActionPerformed
 
 
@@ -409,7 +435,7 @@ public class GameUI extends javax.swing.JPanel {
     private javax.swing.JTextField BlackTimeField;
     private javax.swing.JPanel BoardPanel;
     private javax.swing.JTextArea MovesHistory;
-    private javax.swing.JButton MuteButton;
+    private javax.swing.JToggleButton MuteButton;
     private javax.swing.JButton ResignButton;
     private javax.swing.JPanel SidePanel;
     private javax.swing.JPanel WhiteCapturePanel;

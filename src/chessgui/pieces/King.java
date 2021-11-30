@@ -26,12 +26,7 @@ public class King extends Piece {
             if(checkScan(destination_x, destination_y)){
                 if(board.getPiece(destination_x, destination_y) != null){
                     if(board.getPiece(destination_x, destination_y).isWhite() == isWhite()){
-                        if(checkScan(destination_x, destination_y)){
-                            return 0;
-                        }
-                        else{
-                            return -1;
-                        }
+                        return 0;
                     }
                     else{
                         return 1;
@@ -137,25 +132,30 @@ public class King extends Piece {
                         //if target is within board bounds
                         if(tempX <=7 && tempX >=0 && tempY <=7 && tempY >=0){
 
-                                //if piece is found
-                                if(attackingPiece != null){ 
-                                    pieceFound = true;
-                                    if(attackingPiece.isWhite() != isWhite()){
-                                        //attacking piece cant move when called bc friendly piece on square
-                                        if(attackingPiece.canMove(x, y) > -1){
-                                            clearMove= false;
-                                        } 
-                                    }                                  
+                            //if piece is found
+                            if(attackingPiece != null && !attackingPiece.getFilePath().equals("King.png")){ 
+                                pieceFound = true;
+                                if(attackingPiece.isWhite() != isWhite()){
+                                    //attacking piece cant move when called bc friendly piece on square
+                                    if(attackingPiece.canMove(x, y) > -1){
+                                        clearMove= false;
+                                    } 
+                                }                                  
+                            }
+                            else if(attackingPiece != null && attackingPiece.getFilePath().equals("King.png")){
+                                if((Math.abs(attackingPiece.getX()-x) <= 1) && (Math.abs(attackingPiece.getY()-y) <= 1)){
+                                    clearMove = false;
                                 }
                             }
-                            //pieceFound = true when ran off board without colliding or targeting self
-                            else{
-                            pieceFound = true;
-                            }
                         }
-                    }   
-                }
+                        //pieceFound = true when ran off board without colliding or targeting self
+                        else{
+                            pieceFound = true;
+                        }
+                    }
+                }   
             }
+        }
         
         //check for horses
         //this is gross but I don't imagine a clean algorithim will make it any more efficient
