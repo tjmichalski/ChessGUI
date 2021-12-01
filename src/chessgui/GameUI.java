@@ -5,7 +5,9 @@
  */
 package chessgui;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -25,6 +27,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -47,6 +50,7 @@ public class GameUI extends javax.swing.JPanel {
     private Duration blackTimePassed, whiteTimePassed;
     private Timer blackTimer, whiteTimer;
     private ButtonGroup muteButton;
+    private Duration duration;
     
     private final int increment;
     
@@ -55,6 +59,7 @@ public class GameUI extends javax.swing.JPanel {
         this.mainFrame = mainFrame;
         this.board = new Board(this, boardName, piecesName, mainFrame);
         this.muteButton = new ButtonGroup();
+        this.duration = Duration.ofMinutes(gameTime);
         BoardPanel.add(board);
         boardLayout = new FlowLayout();
         BoardPanel.setLayout(boardLayout);
@@ -91,12 +96,28 @@ public class GameUI extends javax.swing.JPanel {
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
+                        board.addEndgame("White Timeout");
                         gameOver(-1, "Timeout");
                     } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                         Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 WhiteTimeField.setText(format(timeLeft));
+            }
+            public void updateTime(){
+                LocalDateTime now = LocalDateTime.now();
+                Duration runningTime = Duration.between(blackStart, now);
+                Duration timeLeft = duration.minus(runningTime).minus(blackTimePassed);
+                if(timeLeft.isZero() || timeLeft.isNegative()){
+                    timeLeft = Duration.ZERO;
+                    try {
+                        board.addEndgame("Black Timeout");
+                        gameOver(1, "Timeout");
+                    } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
+                        Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                BlackTimeField.setText(format(timeLeft));
             }
         });
         whiteTimer.start();
@@ -113,6 +134,7 @@ public class GameUI extends javax.swing.JPanel {
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
+                        board.addEndgame("Black Timeout");
                         gameOver(1, "Timeout");
                     } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                         Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,7 +160,7 @@ public class GameUI extends javax.swing.JPanel {
     public void updateHistory(ArrayList<String> moves){
         String buffer = "";
         for(int x=0; x<moves.size(); x++){
-            buffer += moves.get(x);
+            buffer += (x+1) + ". " + moves.get(x);
         }
         
         MovesHistory.setText(buffer);
@@ -149,7 +171,6 @@ public class GameUI extends javax.swing.JPanel {
             whiteTimer.stop();           
             blackStart = LocalDateTime.now();
             whiteTimePassed = whiteTimePassed.plus(Duration.between(whiteStart, blackStart)).minus(Duration.ofSeconds(increment));
-            
             blackTimer.start();
         }
         else if (blackTimer.isRunning()){
@@ -403,6 +424,7 @@ public class GameUI extends javax.swing.JPanel {
     private void ResignButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ResignButtonActionPerformed
         if(board.turnCounter % 2 == 1){
             try {
+                board.addEndgame("Black Resignation");
                 gameOver(1, "Resignation");
             } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
@@ -410,6 +432,7 @@ public class GameUI extends javax.swing.JPanel {
         }
         else{
             try {
+                board.addEndgame("White Resignation");
                 gameOver(-1, "Resignation");
             } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                 Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);

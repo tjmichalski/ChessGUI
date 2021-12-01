@@ -22,11 +22,11 @@ import javax.swing.*;
 
 public final class Board extends JPanel {
         
-    public int turnCounter = 0;
+    public int turnCounter = 0, turnCounter2=-1;
     public int fiftyMovesCounter = 0;
     private ArrayList<String> moves;
     private MainFrame mainFrame;
-
+    private ArrayList<String> gameStates;
     private static final Image NULL_IMAGE = new BufferedImage(11, 11, BufferedImage.TYPE_INT_ARGB);
 
     private final int Square_Width = 110;
@@ -117,6 +117,7 @@ public final class Board extends JPanel {
         White_Pieces = new ArrayList();
         Black_Pieces = new ArrayList();
         this.moves = new ArrayList();
+        this.gameStates = new ArrayList();
 
         initGrid();
 
@@ -245,12 +246,34 @@ public final class Board extends JPanel {
         return canBeBlocked;
     }
     
+    private void recordGamestate(){
+        String gameState = "";
+        if(turnCounter2 != turnCounter){
+            turnCounter2 = turnCounter;
+            
+            for(int x=0; x<Black_Pieces.size(); x++){
+                gameState += Black_Pieces.get(x).isWhite();
+                gameState += Black_Pieces.get(x).getFilePath();
+                gameState += Black_Pieces.get(x).getX();
+                gameState += Black_Pieces.get(x).getY();
+            }
+            for(int x=0; x<White_Pieces.size(); x++){
+                gameState += White_Pieces.get(x).isWhite();
+                gameState += White_Pieces.get(x).getFilePath();
+                gameState += White_Pieces.get(x).getX();
+                gameState += White_Pieces.get(x).getY();
+            }
+            gameStates.add(gameState);
+        }
+         
+    }
+    
     private void recordMove(Piece lastRemoved, Piece lastMoved){
         if(lastRemoved == null){
-            this.moves.add(turnCounter + ". " + files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "->" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
+            this.moves.add(files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "->" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
         }
         else{
-            this.moves.add(turnCounter + ". " + files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "X" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
+            this.moves.add(files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "X" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
         }
         gameUI.updateHistory(this.moves);
         
@@ -269,10 +292,10 @@ public final class Board extends JPanel {
             
         if(lastRemoved != null){
             if(lastRemoved.isWhite()){
-                White_Pieces.add(lastRemoved);
+                White_Pieces.add(White_Pieces.size()-1, lastRemoved);
             }
             else if(!lastRemoved.isWhite()){
-                Black_Pieces.add(lastRemoved);
+                Black_Pieces.add(White_Pieces.size()-1, lastRemoved);
             }
             
             gameUI.revertCapture(!lastRemoved.isWhite());
@@ -289,6 +312,10 @@ public final class Board extends JPanel {
         }
     }
     
+    public void addEndgame(String method){
+        moves.add(method);
+    }
+    
     private void checkEndgames() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         lackOfMaterial();
         fiftyMovesRule();
@@ -296,8 +323,16 @@ public final class Board extends JPanel {
         repetition();
     }
 
-    private void repetition()throws IOException, FileNotFoundException, ClassNotFoundException{
-
+    private void repetition()throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
+        gameStates.sort(String::compareToIgnoreCase);
+        for(int x=1; x<gameStates.size()-1; x++){
+            if(gameStates.get(x).equals(gameStates.get(x-1))){
+               if(gameStates.get(x).equals(gameStates.get(x+1))){
+                   addEndgame("Repetition");
+                   gameUI.gameOver(0, "Repetition");
+               } 
+            }
+        }
     }
 
     private void staleMate() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
@@ -317,6 +352,7 @@ public final class Board extends JPanel {
             } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
             }
+            addEndgame("Stalemate");
             gameUI.gameOver(0, "Stalemate");
         }
         else if(!whiteKing.checkMateScan() && turnCounter%2==0){
@@ -334,12 +370,14 @@ public final class Board extends JPanel {
             } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
             }
+            addEndgame("Stalemate");
             gameUI.gameOver(0, "Stalemate");
         }
     }
 
     private void fiftyMovesRule() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         if(fiftyMovesCounter >= 100){
+            addEndgame("50 Moves Rule");
             gameUI.gameOver(0, "50 Moves Rule");
         }
     }
@@ -358,6 +396,7 @@ public final class Board extends JPanel {
                 pieces += Black_Pieces.get(x).getNotationName();
             }
             if(noMaterialTypes[0].equals(pieces) || noMaterialTypes[1].equals(pieces) || noMaterialTypes[2].equals(pieces)){
+                addEndgame("Lack Of Material");
                 gameUI.gameOver(0, "Lack Of Material");
             }
         }
@@ -516,9 +555,12 @@ public final class Board extends JPanel {
                         }
                     }
                     else {
+                        
+                        recordGamestate();
                         recordMove(lastRemoved, lastMoved);
                         if(!whiteKing.checkMateScan()){
                             try {
+                                addEndgame("Black Checkmate");
                                 gameUI.gameOver(-1, "Checkmate");
                             } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
@@ -544,9 +586,11 @@ public final class Board extends JPanel {
                         }
                     }
                     else{
+                        recordGamestate();
                         recordMove(lastRemoved, lastMoved);
                         if(!blackKing.checkMateScan()){
                             try {
+                                addEndgame("White Checkmate");
                                 gameUI.gameOver(1, "Checkmate");
                             } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                                 Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
@@ -567,6 +611,7 @@ public final class Board extends JPanel {
                     } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
                         Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    recordGamestate();
                     recordMove(lastRemoved, lastMoved);
                 }
                 
