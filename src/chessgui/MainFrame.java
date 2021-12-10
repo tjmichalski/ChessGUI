@@ -12,11 +12,12 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-
-//creates window and sets meta data for window
+//main visual element
 public class MainFrame extends JFrame {
     
+    //panel currently displayed
     private JPanel mainPanel;
+    //nested list of all games history
     private ArrayList<ArrayList <String>> allGamesHistory;
     
     //variables for file input and output
@@ -25,6 +26,7 @@ public class MainFrame extends JFrame {
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     
+    //public variables for various game settings
     public String boardName;
     public String piecesName;
     public Boolean isMute;
@@ -53,7 +55,7 @@ public class MainFrame extends JFrame {
         this.pack();
     }
     
-    //add an employee to file
+    //add a finished game to gamesHistory and save file
     public void recordGame(ArrayList<String> moves)throws FileNotFoundException, IOException, ClassNotFoundException {
         getAllHistory();
         allGamesHistory.add(moves);
@@ -61,14 +63,15 @@ public class MainFrame extends JFrame {
         oos = new ObjectOutputStream(fos);
         oos.writeObject(allGamesHistory);
     }
-    
-    //updates mainFrame employees list from file AND returns list
+
+    //read gameHistory fiile
     public ArrayList<ArrayList <String>> getAllHistory() throws FileNotFoundException, IOException, ClassNotFoundException{
         
         String file = "GamesHistory.txt";
         try{
             fis = new FileInputStream(file);
         }
+        //create file is doesn't exist
         catch(FileNotFoundException e){
             File newFile = new File(file);
             newFile.createNewFile();
@@ -79,13 +82,12 @@ public class MainFrame extends JFrame {
             allGamesHistory = (ArrayList<ArrayList <String>>) ois.readObject();
             ois.close();
         }
+        //if file empty, start new list
         catch(EOFException e){
             allGamesHistory = new ArrayList();
             allGamesHistory.add(new ArrayList());
         }
         
         return allGamesHistory;
-    }
-    
-    
+    }   
 }

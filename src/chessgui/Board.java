@@ -4,7 +4,6 @@ import chessgui.pieces.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
-import java.awt.image.*;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -20,54 +19,79 @@ import javax.swing.*;
 //what is this?
 @SuppressWarnings("serial")
 
+//main powerhouse object for gameplay operations
 public final class Board extends JPanel {
-        
-    public int turnCounter = 0;
-    public int fiftyMovesCounter = 0;
-    private final ArrayList<String> moves;
+
+    //used for many graphic maniuplations
     private final MainFrame mainFrame;
-    private ArrayList<String> gameStates;
-    private static final Image NULL_IMAGE = new BufferedImage(11, 11, BufferedImage.TYPE_INT_ARGB);
-    private boolean computerPlayer;
-
+ 
+    //various graphics related variables
     private final int Square_Width = 110;
-    public ArrayList<Piece> White_Pieces;
-    public ArrayList<Piece> Black_Pieces;
+    private final ArrayList<DrawingShape> Static_Shapes;
+    private final ArrayList<DrawingShape> Piece_Graphics;
+    private final String[] files = {"H", "G", "F", "E", "D", "C", "B", "A"};
     
-    public Boolean castleMove = false;
-    public Boolean enPassantMove = false;
-    
-    public ArrayList<DrawingShape> Static_Shapes;
-    public ArrayList<DrawingShape> Piece_Graphics;
-
-    public Piece Active_Piece;
-    public Piece lastMoved;
-    public Piece lastRemoved;
-    public Piece blackKing;
-    public Piece whiteKing;
-    public GameUI gameUI;
-
-    private final int rows = 8;
-    private final int cols = 8;
-    private Integer[][] BoardGrid;
     public String boardName;
     public String piecesName;
-    private String board_file_path = "images" + File.separator;
-    private String active_square_file_path = "images" + File.separator + "active_square.png";
+
     
-    private final String[] files = {"H", "G", "F", "E", "D", "C", "B", "A"};
+    //lists of pieces for each player
+    private ArrayList<Piece> White_Pieces;
+    private ArrayList<Piece> Black_Pieces;
 
-    public void initGrid(){
-        for (int i = 0; i < rows; i++)
-        {
-            for (int j = 0; j < cols; j++)
-            {
-                BoardGrid[i][j] = 0;
-            }
-        }
+    
+    //various functional variables for game rules and activity
+    private boolean computerPlayer;
+    private Piece Active_Piece;
+    private Piece lastRemoved;
+    private Piece blackKing;
+    private Piece whiteKing;
+    private GameUIPanel gameUI;
+    
+    public Piece lastMoved;
+    public Boolean castleMove = false;
+    public Boolean enPassantMove = false;
+    public int turnCounter = 0;
+    private int fiftyMovesCounter = 0;
+    
+    //each gamestate held to check for repetition rule
+    private final ArrayList<String> gameStates;
+    
+    //each move saved for game history file writing
+    private final ArrayList<String> moves;
 
-        //Image white_piece = loadImage("images/white_pieces/" + piece_name + ".png");
-        //Image black_piece = loadImage("images/black_pieces/" + piece_name + ".png");  
+    
+    public Board(GameUIPanel gameUI, String boardName, String piecesName, MainFrame mainFrame, boolean computerPlayer) {
+        //init bunch of variables
+        this.gameUI = gameUI;
+        this.boardName = boardName;
+        this.piecesName = piecesName;
+        this.mainFrame = mainFrame;
+        this.computerPlayer = computerPlayer;
+        this.Static_Shapes = new ArrayList();
+        this.Piece_Graphics = new ArrayList();
+        this.White_Pieces = new ArrayList();
+        this.Black_Pieces = new ArrayList();
+        this.moves = new ArrayList();
+        this.gameStates = new ArrayList();
+
+        //various graphic settings initiated
+        this.setPreferredSize(new Dimension(880, 880));
+        this.setMinimumSize(new Dimension(880, 880));
+        this.setMaximumSize(new Dimension(880, 880));
+        this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        this.setVisible(true);
+        this.requestFocus();
+        
+        //mouse listener for user inputs
+        this.addMouseListener(mouseAdapter);
+        
+        initPieces();       
+        drawBoard();
+    }
+    
+    //create and add fresh game of pieces to pieces lists
+    private void initPieces(){
 
         White_Pieces.add(new King(3,0,true,"King.png",this, 31));
         whiteKing = getPiece(3,0);
@@ -104,48 +128,15 @@ public final class Board extends JPanel {
         Black_Pieces.add(new Pawn(5,6,false,"Pawn.png",this, 1));
         Black_Pieces.add(new Pawn(6,6,false,"Pawn.png",this, 1));
         Black_Pieces.add(new Pawn(7,6,false,"Pawn.png",this, 1));
-
     }
 
-    public Board(GameUI gameUI, String boardName, String piecesName, MainFrame mainFrame, boolean computerPlayer) {
-        this.gameUI = gameUI;
-        this.boardName = boardName;
-        this.piecesName = piecesName;
-        this.mainFrame = mainFrame;
-        this.computerPlayer = computerPlayer;
-        BoardGrid = new Integer[rows][cols];
-        Static_Shapes = new ArrayList();
-        Piece_Graphics = new ArrayList();
-        White_Pieces = new ArrayList();
-        Black_Pieces = new ArrayList();
-        this.moves = new ArrayList();
-        this.gameStates = new ArrayList();
-
-        initGrid();
-
-        this.setBackground(new Color(120,13,84));
-        this.setPreferredSize(new Dimension(880, 880));
-        this.setMinimumSize(new Dimension(880, 880));
-        this.setMaximumSize(new Dimension(880, 880));
-
-        this.addMouseListener(mouseAdapter);
-        this.addComponentListener(componentAdapter);
-        this.addKeyListener(keyAdapter);
-        this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
-
-        
-        this.setVisible(true);
-        this.requestFocus();
-        drawBoard();
-    }
-
-
+    //add board and each piece graphics to board and graphics lists
     private void drawBoard()
     {
         Piece_Graphics.clear();
         Static_Shapes.clear();
         
-        Image board = loadImage(this.board_file_path+boardName);
+        Image board = loadImage("images/"+boardName);
         Static_Shapes.add(new DrawingImage(board, new Rectangle2D.Double(0, 0, 880, 880)));
         
         //recolor square currently clicked
@@ -196,10 +187,8 @@ public final class Board extends JPanel {
         return null;
     }
     
-    //find if king can be blocked
-    public Boolean canBeBlocked(int kingX, int kingY, boolean isWhite){
-        Boolean canBeBlocked = false;
- 
+    //find if king can be blocked - variables recieved pertain to king needing needing defending
+    public Boolean canBeBlocked(int kingX, int kingY, boolean isWhite){ 
         ArrayList<Piece> canMovers = new ArrayList();
         ArrayList<Point2D> attackSquares;
             
@@ -228,7 +217,7 @@ public final class Board extends JPanel {
                 for(int k=0; k<White_Pieces.size(); k++){
                     for(int j=0; j<attackSquares.size(); j++){
                         if(White_Pieces.get(k).canMove((int)attackSquares.get(j).getX(), (int)attackSquares.get(j).getY()) > 0){
-                            canBeBlocked = true;
+                            return true;
                         }
                     }
                 }
@@ -237,15 +226,16 @@ public final class Board extends JPanel {
                 for(int k=0; k<Black_Pieces.size(); k++){
                     for(int j=0; j<attackSquares.size(); j++){
                         if(Black_Pieces.get(k).canMove((int)attackSquares.get(j).getX(), (int)attackSquares.get(j).getY()) > 0){
-                           canBeBlocked = true;
+                           return true;
                         }
                     }
                 }
             }
         }
-        return canBeBlocked;
+        return false;
     }
     
+    //record color, type, and position of each piece in play
     private void recordGamestate(){
         String gameState = "";
             
@@ -264,6 +254,7 @@ public final class Board extends JPanel {
             gameStates.add(gameState);         
     }
     
+    //record original position, move type (capture or just move), and new position of each move - then display on gamehistory panel
     private void recordMove(Piece lastRemoved, Piece lastMoved){
         if(lastRemoved == null){
             this.moves.add(files[lastMoved.getLast_x()] + (lastMoved.getLast_y()+1) + lastMoved.getNotationName() + "->" + files[lastMoved.getX()] + (lastMoved.getY()+1) + "  \n");
@@ -274,18 +265,18 @@ public final class Board extends JPanel {
         gameUI.updateHistory(this.moves);
         
     }
-        
-    public ArrayList<String> getMoves(){
-        return this.moves;
-    }
     
-    //reverts last move and sets various variables to previous states
+    //reverts last move and sets various variables to previous states to prevent errors
     public void revertMove() throws IOException{
+        //needed incase reverting castle or passant move
         castleMove = false;
         enPassantMove = false;
+        
+        //move piece back to position
         lastMoved.setX(lastMoved.getLast_x());
         lastMoved.setY(lastMoved.getLast_y());
             
+        //if a piece was removed, readd it
         if(lastRemoved != null){
             if(lastRemoved.isWhite()){
                 White_Pieces.add(White_Pieces.size()-1, lastRemoved);
@@ -297,10 +288,17 @@ public final class Board extends JPanel {
             gameUI.revertCapture(!lastRemoved.isWhite());
         }
             
+        //back up reverted piece's move counter
         lastMoved.setMoveCounter(lastMoved.getMoveCounter() - 1);
+        
+        //revert clock change
         gameUI.switchTimers();
+        
+        //reset lastmoved and decrement game move counter
         lastMoved = null;
         turnCounter--;
+        
+        //play sound
         try {
             playSound("sounds/undo.wav");
         } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
@@ -308,10 +306,12 @@ public final class Board extends JPanel {
         }
     }
     
+    //if game over, note win method in game history
     public void addEndgame(String method){
         moves.add(method);
     }
     
+    //check each possible endgame on moves
     private void checkEndgames() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         lackOfMaterial();
         fiftyMovesRule();
@@ -319,6 +319,7 @@ public final class Board extends JPanel {
         repetition();
     }
 
+    //same game state achieved 3 times in one game == draw
     private void repetition()throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         gameStates.sort(String::compareToIgnoreCase);
         for(int x=1; x<gameStates.size()-1; x++){
@@ -331,6 +332,7 @@ public final class Board extends JPanel {
         }
     }
 
+    //no moveable pieces without putting self in check == draw
     private void staleMate() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         if(!blackKing.checkMateScan() && turnCounter%2 == 1){
             for(int n=1; n<Black_Pieces.size(); n++){
@@ -371,6 +373,7 @@ public final class Board extends JPanel {
         }
     }
 
+    //each player makes 50 continuous moves with no capture OR pawn moves == draw
     private void fiftyMovesRule() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         if(fiftyMovesCounter >= 100){
             addEndgame("50 Moves Rule");
@@ -378,6 +381,7 @@ public final class Board extends JPanel {
         }
     }
 
+    //pieces remaining constitute a non-checkmateable gamestate == draw
     private void lackOfMaterial() throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         String[] noMaterialTypes = {"K", "KB", "KN"};
 
@@ -398,27 +402,30 @@ public final class Board extends JPanel {
         }
     }
     
+    //move indicated piece to indicated coordinates
     public void movePiece(Piece piece, int x, int y){
         piece.setX(x);
         piece.setY(y);
         lastMoved = piece;
         gameUI.switchTimers();
+        //if playing against computer, generate its next move
         if(computerPlayer){
             getNextMove();
         }
     }
     
+    //tbd
     private void getNextMove(){
         
     }
     
-    private MouseAdapter mouseAdapter = new MouseAdapter() {
-        
-        @Override
-        public void mouseClicked(MouseEvent e) {
-
-                
-        }
+    //return game history
+    public ArrayList<String> getMoves(){
+        return this.moves;
+    }
+    
+    //
+    private final MouseAdapter mouseAdapter = new MouseAdapter() {
 
         @Override
         public void mousePressed(MouseEvent e) {
@@ -459,7 +466,7 @@ public final class Board extends JPanel {
                 else if (Active_Piece != null && Active_Piece.canMove(Clicked_Column, Clicked_Row)  > 0
                         && ((is_whites_turn && Active_Piece.isWhite()) || (!is_whites_turn && !Active_Piece.isWhite())))
                 {
-                    // if piece is there, remove it so we can be there
+                    // if piece is there, remove it so we can move there
                     if (clicked_piece != null)
                     {
                         lastRemoved = clicked_piece;
@@ -487,9 +494,11 @@ public final class Board extends JPanel {
                             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    //else no piece removed
                     else{
                         lastRemoved = null;
                     }
+                    
                     movePiece(Active_Piece, Clicked_Column, Clicked_Row);
 
                     // if piece is a pawn set has_moved to true
@@ -553,7 +562,9 @@ public final class Board extends JPanel {
                         }
                     }
 
+                    //if whiteking in check
                     if(!whiteKing.checkScan(whiteKing.getX(), whiteKing.getY())){
+                        //if put self in check, revert move, illegal
                         if(lastMoved.isWhite()){
                             try {
                                 revertMove();
@@ -565,6 +576,8 @@ public final class Board extends JPanel {
 
                             recordGamestate();
                             recordMove(lastRemoved, lastMoved);
+                            
+                            //if white king in checkmate, gameover
                             if(!whiteKing.checkMateScan()){
                                 try {
                                     addEndgame("Black Checkmate");
@@ -583,7 +596,9 @@ public final class Board extends JPanel {
 
                         }
                     }
+                    //if black king in check
                     else if (!blackKing.checkScan(blackKing.getX(), blackKing.getY())){
+                        //if put self in check, revert move, illegal
                         if(!lastMoved.isWhite()){
                             try {
                                 revertMove();
@@ -592,8 +607,11 @@ public final class Board extends JPanel {
                             }
                         }
                         else{
+                            
                             recordGamestate();
                             recordMove(lastRemoved, lastMoved);
+                            
+                            //if black king in checkmate, gameover
                             if(!blackKing.checkMateScan()){
                                 try {
                                     addEndgame("White Checkmate");
@@ -622,12 +640,13 @@ public final class Board extends JPanel {
                     }
 
                 }
+                //check for non checkmate endgames and redraw board
                 try {
                             checkEndgames();
                         } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
                             Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                drawBoard();
+                        drawBoard();
             }
         }
 
@@ -642,9 +661,11 @@ public final class Board extends JPanel {
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) 
         {
-        }	
-
-        
+        }
+        @Override
+        public void mouseClicked(MouseEvent e) {         
+        }
+      
     };
     
     private void playSound(String fileName) throws LineUnavailableException, UnsupportedAudioFileException, IOException{
@@ -665,7 +686,7 @@ public final class Board extends JPanel {
                 return ImageIO.read(new File(imageFile));
         }
         catch (IOException e) {
-                return NULL_IMAGE;
+                return null;
         }
     }
 
@@ -693,48 +714,6 @@ public final class Board extends JPanel {
             shape.draw(g2);
         }
     }
-
-    private ComponentAdapter componentAdapter = new ComponentAdapter() {
-
-        @Override
-        public void componentHidden(ComponentEvent e) {
-
-        }
-
-        @Override
-        public void componentMoved(ComponentEvent e) {
-
-        }
-
-        @Override
-        public void componentResized(ComponentEvent e) {
-
-        }
-
-        @Override
-        public void componentShown(ComponentEvent e) {
-
-        }	
-    };
-
-    private KeyAdapter keyAdapter = new KeyAdapter() {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-
-        }	
-    };
-
 }
 
 

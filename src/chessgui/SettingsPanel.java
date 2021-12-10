@@ -26,20 +26,31 @@ import javax.swing.ListSelectionModel;
  */
 public class SettingsPanel extends javax.swing.JPanel {
 
-    private DefaultListModel allHistoryList, gameHistoryList;
-    private MainFrame mainFrame;
-    private ArrayList<ArrayList <String>> gamesHistory;
+    //to ensure single game selection when all games displayed
+    private final DefaultListModel allHistoryList;
+    //ensure single move selection when viewing individual game
+    private DefaultListModel gameHistoryList;
+    //mainframe for new panel calls 
+    private final MainFrame mainFrame;
+    //nested list of all games and their moves
+    private final ArrayList<ArrayList <String>> gamesHistory;
+    //images of graphic options
     private Image board1, board2, board3, pieces1, pieces2, pieces3;
-    private FlowLayout boardsLayout, piecesLayout;
+    //labels for graphic options
     private JLabel B1Label, B2Label, B3Label, P1Label, P2Label, P3Label;
-    private ButtonGroup boardsGroup, piecesGroup;
+    //layouts for visual alignments
+    private FlowLayout boardsLayout, piecesLayout;  
+    //button groups to ensure single selections
+    private final ButtonGroup boardsGroup, piecesGroup;
     
     public SettingsPanel(MainFrame mainFrame) throws IOException, FileNotFoundException, ClassNotFoundException{
+        //initiate variables
         initComponents();
         this.mainFrame = mainFrame;
         this.gamesHistory = mainFrame.getAllHistory();
         this.allHistoryList = new DefaultListModel();
         
+        //setup button groups
         this.boardsGroup = new ButtonGroup();
         this.boardsGroup.add(Board1Button);
         this.boardsGroup.add(Board2Button);
@@ -50,9 +61,11 @@ public class SettingsPanel extends javax.swing.JPanel {
         this.piecesGroup.add(Pieces2Button);
         this.piecesGroup.add(Pieces3Button);
         
+        //add each game to historylist Model
         for(int x=0; x < gamesHistory.size(); x++){
             allHistoryList.addElement(gamesHistory.get(x));
         }
+        //give model to actual list graphic and set variables
         HistoryList = new JList(allHistoryList);
         HistoryListPane.setViewportView(HistoryList);
         HistoryList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -60,6 +73,7 @@ public class SettingsPanel extends javax.swing.JPanel {
         createImages();
     }
     
+    //display the graphics
     private void createImages() throws IOException{
         this.boardsLayout = new FlowLayout();
         this.boardsLayout.setHgap(5);

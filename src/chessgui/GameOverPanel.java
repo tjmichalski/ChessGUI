@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package chessgui;
 
 import java.awt.Color;
@@ -19,34 +14,48 @@ import javax.swing.BorderFactory;
  * @author tylar
  */
 
-public class GameOver extends javax.swing.JPanel {
+public class GameOverPanel extends javax.swing.JPanel {
 
-    private int isWhite;
-    private String method;
-    private MainFrame mainFrame;
+    //winners color
+    private final int isWhite;
+    //winning method
+    private final String method;
+    //mainframe for new panel calls
+    private final MainFrame mainFrame;
+    //board background image
     private Image background;
     
-    public GameOver(String method, int isWhite, MainFrame mainFrame) throws IOException {
+    //GameOverPanel displayed when a game has been succesfully completed
+    public GameOverPanel(String method, int isWhite, MainFrame mainFrame) throws IOException {
+        //set variables
         initComponents();
         this.isWhite = isWhite;
         this.mainFrame = mainFrame;
         this.method = method;
+        //make background pretty
         this.background = ImageIO.read(new File("images/" + mainFrame.boardName));
         this.background = background.getScaledInstance(880, 880, Image.SCALE_SMOOTH);
         this.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        
+        //add options panel to interface for new game options
         GameOptionsPanel panel = new GameOptionsPanel(mainFrame);
         panel.setBorder(BorderFactory.createLineBorder(Color.black));
         OptionsPanel.add(panel);
         OptionsPanel.setLayout(new FlowLayout());
         
-        if(this.isWhite == 1){
-            WinnerLabel.setText("White Has Won By " + this.method);
-        }
-        else if(this.isWhite == -1){
-            WinnerLabel.setText("Black Has Won By " + this.method);
-        }
-        else if(this.isWhite == 0){
-            WinnerLabel.setText("Game Has Drawn By " + this.method);
+        //endgame method indicated by winner's color
+        switch (this.isWhite) {
+            case 1:
+                WinnerLabel.setText("White Has Won By " + this.method);
+                break;
+            case -1:
+                WinnerLabel.setText("Black Has Won By " + this.method);
+                break;
+            case 0:
+                WinnerLabel.setText("Game Has Drawn By " + this.method);
+                break;
+            default:
+                break;
         }
     }
     

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package chessgui;
 
 import java.io.IOException;
@@ -14,8 +9,9 @@ import java.util.logging.Logger;
  * @author tylar
  */
 public class StartMenu extends javax.swing.JPanel {
-
-    MainFrame mainFrame;
+    
+    //mainframe for new panel calls
+    private final MainFrame mainFrame;
     
     public StartMenu(MainFrame mainFrame) {
         initComponents();
@@ -104,9 +100,7 @@ public class StartMenu extends javax.swing.JPanel {
     private void SettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SettingsButtonActionPerformed
         try {
             mainFrame.setNewPanel(new SettingsPanel(mainFrame));
-        } catch (IOException ex) {
-            Logger.getLogger(StartMenu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(StartMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_SettingsButtonActionPerformed

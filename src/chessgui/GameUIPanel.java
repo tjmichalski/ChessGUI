@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package chessgui;
 
 import java.awt.FlowLayout;
@@ -33,52 +28,64 @@ import javax.swing.Timer;
  *
  * @author tylar
  */
-public class GameUI extends javax.swing.JPanel {
 
-    private final String moves;
+//main graphic element ingame 
+public class GameUIPanel extends javax.swing.JPanel {
+    
+    //mainFrame for various graphic updates
     private final MainFrame mainFrame;
+    
+    //board contains game pieces and board
     private final Board board;
-    public ArrayList<JLabel> whiteGraphics;
-    public ArrayList<JLabel> blackGraphics;
+    
+    //graphic elements for each player's captured pieces
+    private final ArrayList<JLabel> whiteGraphics;
+    private final ArrayList<JLabel> blackGraphics;
+    
     private final FlowLayout boardLayout;
     
+    //variables needed for clock keeping
     private LocalDateTime blackStart, whiteStart;
     private Duration blackTimePassed, whiteTimePassed;
     private Timer blackTimer, whiteTimer;
-    private ButtonGroup muteButton;
     private Duration duration;
     
     private final int increment;
     
-    public GameUI(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName) throws IOException {
+    public GameUIPanel(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName) throws IOException {
+        //init variables
         initComponents();
         this.mainFrame = mainFrame;
         this.board = new Board(this, boardName, piecesName, mainFrame, false);
-        this.muteButton = new ButtonGroup();
         this.duration = Duration.ofMinutes(gameTime);
+        this.whiteGraphics = new ArrayList();
+        this.blackGraphics = new ArrayList();
+        this.boardLayout = new FlowLayout();
+        this.increment = increment;
+        
+        //various graphic updates
         BoardPanel.add(board);
-        boardLayout = new FlowLayout();
         BoardPanel.setLayout(boardLayout);
         BlackCapturePanel.setLayout(new GridLayout(4,4));
         WhiteCapturePanel.setLayout(new GridLayout(4,4));
-        whiteGraphics = new ArrayList();
-        blackGraphics = new ArrayList();
-        this.moves = "";
-        startClock(gameTime);
-        this.increment = increment;
-        WhiteTimeField.setText(gameTime + "m 00s");
-        BlackTimeField.setText(gameTime + "m 00s");
         MovesHistory.setEditable(false);
         
+        //start clocks and display times
+        startClock(gameTime);        
+        WhiteTimeField.setText(gameTime + "m 00s");
+        BlackTimeField.setText(gameTime + "m 00s");
+        
+        //if muted from previous game, keep muted
         if(mainFrame.isMute == true){
             MuteButton.setText("Unmute");
             MuteButton.setSelected(true);
         }
     }
     
-    public void startClock(int gameTime){
+    //initialize timers and give it actionPerformed to handle game conditions
+    private void startClock(int gameTime){
         
-        Duration duration = Duration.ofMinutes(gameTime);
+        Duration totalDuration = Duration.ofMinutes(gameTime);
         
         whiteStart = LocalDateTime.now();
         whiteTimePassed = Duration.ofMinutes(0);
@@ -88,14 +95,14 @@ public class GameUI extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent e){
                 LocalDateTime now = LocalDateTime.now();
                 Duration runningTime = Duration.between(whiteStart, now);
-                Duration timeLeft = duration.minus(runningTime).minus(whiteTimePassed);
+                Duration timeLeft = totalDuration.minus(runningTime).minus(whiteTimePassed);
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
                         board.addEndgame("White Timeout");
                         gameOver(-1, "Timeout");
                     } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                        Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GameUIPanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 WhiteTimeField.setText(format(timeLeft));
@@ -103,14 +110,14 @@ public class GameUI extends javax.swing.JPanel {
             public void updateTime(){
                 LocalDateTime now = LocalDateTime.now();
                 Duration runningTime = Duration.between(blackStart, now);
-                Duration timeLeft = duration.minus(runningTime).minus(blackTimePassed);
+                Duration timeLeft = totalDuration.minus(runningTime).minus(blackTimePassed);
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
                         board.addEndgame("Black Timeout");
                         gameOver(1, "Timeout");
                     } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                        Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GameUIPanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 BlackTimeField.setText(format(timeLeft));
@@ -126,14 +133,14 @@ public class GameUI extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent e){
                 LocalDateTime now = LocalDateTime.now();
                 Duration runningTime = Duration.between(blackStart, now);
-                Duration timeLeft = duration.minus(runningTime).minus(blackTimePassed);
+                Duration timeLeft = totalDuration.minus(runningTime).minus(blackTimePassed);
                 if(timeLeft.isZero() || timeLeft.isNegative()){
                     timeLeft = Duration.ZERO;
                     try {
                         board.addEndgame("Black Timeout");
                         gameOver(1, "Timeout");
                     } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                        Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(GameUIPanel.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
                 BlackTimeField.setText(format(timeLeft));
@@ -153,6 +160,7 @@ public class GameUI extends javax.swing.JPanel {
             clip.start();
     }
     
+    //update the game history graphic
     public void updateHistory(ArrayList<String> moves){
         String buffer = "";
         for(int x=0; x<moves.size(); x++){
@@ -162,6 +170,7 @@ public class GameUI extends javax.swing.JPanel {
         MovesHistory.setText(buffer);
     }
     
+    //on player move, turn currently on timer off, and vice versa
     public void switchTimers(){
         if(whiteTimer.isRunning()){
             whiteTimer.stop();           
@@ -177,6 +186,7 @@ public class GameUI extends javax.swing.JPanel {
         }
     }
     
+    //format the time for display
     protected String format(Duration duration) {
             long hours = duration.toHours();
             long mins = duration.minusHours(hours).toMinutes();
@@ -184,9 +194,9 @@ public class GameUI extends javax.swing.JPanel {
             return String.format("%02dm %02ds", mins, seconds);
     }
 
+    //when player captures, add to their captures panel
     public void pieceRemoved(String filePath, Boolean isWhite) throws IOException{
         if(isWhite){
-//            BufferedImage piece = ImageIO.read(new File("images" + File.separator + "white_pieces" + File.separator + filePath));
             Image piece = ImageIO.read(new File("images" + File.separator + "white_pieces" + File.separator + filePath));
             piece = piece.getScaledInstance(59, 59, Image.SCALE_SMOOTH);
             JLabel label = new JLabel(new ImageIcon(piece));
@@ -194,7 +204,6 @@ public class GameUI extends javax.swing.JPanel {
             BlackCapturePanel.add(label);
         }
         else{
-//            BufferedImage piece = ImageIO.read(new File("images" + File.separator + "black_pieces" + File.separator + filePath));
             Image piece = ImageIO.read(new File("images" + File.separator + "black_pieces" + File.separator + filePath));
             piece = piece.getScaledInstance(59, 59, Image.SCALE_SMOOTH);
             JLabel label = new JLabel(new ImageIcon(piece));
@@ -204,6 +213,7 @@ public class GameUI extends javax.swing.JPanel {
         mainFrame.pack();
     }
     
+    //if a capture is reverted, remove the graphic from captures panel
     public void revertCapture(Boolean isWhite) throws IOException{
         if(isWhite){
             WhiteCapturePanel.remove(whiteGraphics.get(whiteGraphics.size()-1));
@@ -216,6 +226,7 @@ public class GameUI extends javax.swing.JPanel {
         mainFrame.pack();
     }
     
+    //display game over graphics and options
     public void gameOver(int isWhite, String method) throws IOException, FileNotFoundException, ClassNotFoundException, LineUnavailableException, UnsupportedAudioFileException{
         if(!mainFrame.isMute){
            playSound("sounds/gameOver.wav"); 
@@ -225,7 +236,7 @@ public class GameUI extends javax.swing.JPanel {
         whiteTimer.stop();
         BoardPanel.remove(board);
         BoardPanel.repaint();
-        BoardPanel.add(new GameOver(method, isWhite, mainFrame));
+        BoardPanel.add(new GameOverPanel(method, isWhite, mainFrame));
         boardLayout.setAlignment(FlowLayout.CENTER);
         mainFrame.pack();
         mainFrame.recordGame(board.getMoves());
@@ -423,7 +434,7 @@ public class GameUI extends javax.swing.JPanel {
                 board.addEndgame("Black Resignation");
                 gameOver(1, "Resignation");
             } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GameUIPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         else{
@@ -431,7 +442,7 @@ public class GameUI extends javax.swing.JPanel {
                 board.addEndgame("White Resignation");
                 gameOver(-1, "Resignation");
             } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                Logger.getLogger(GameUI.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GameUIPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_ResignButtonActionPerformed
