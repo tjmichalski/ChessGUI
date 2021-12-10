@@ -37,7 +37,6 @@ public class King extends Piece {
                 }
             }
             else{
-                System.out.println("Don't put urself in check " + isWhite());
                 return -1;
             }          
         }
@@ -187,83 +186,6 @@ public class King extends Piece {
         return clearMove;
     }
     
-    
-    
-//    //overriden version of checkScan allows to check for checks at a given location (potential move)
-//    @Override
-//    public Boolean checkScan(int destination_x, int destination_y){
-//        
-//        boolean notInCheck = true;
-//        
-//        
-//        //check for every attacker except horses
-//        for (int i=-1; i <= 1; i++){
-//            for(int j=-1; j<= 1; j++){
-//                
-//                boolean pieceFound = false;
-//                int tempX = destination_x;
-//                int tempY = destination_y;
-//                
-//                while(!pieceFound){
-//                    tempX += i;
-//                    tempY += j;
-//                    Piece attackingPiece = board.getPiece(tempX, tempY);
-//                    
-//                    if(!(i == 0 && j==0)){
-//                        //if target is within board bounds
-//                        if(tempX <=7 && tempX >=0 && tempY <=7 && tempY >=0){
-//
-//                            //if piece is found
-//                            if(attackingPiece != null){                           
-//                                pieceFound = true;
-//
-//                                //return false if located piece is able to attack destination (self discovered check)
-//                                if(attackingPiece.canMove(destination_x, destination_y) && attackingPiece.isWhite() != isWhite()){
-//                                    System.out.println(attackingPiece.getClass());
-//                                    notInCheck= false;
-//                                }   
-//                            }
-//                        }
-//                        //pieceFound = true when ran off board without colliding
-//                        else{
-//                            pieceFound = true;
-//                        }
-//                    }
-//                    //self targeting
-//                    else{
-//                        pieceFound = true;
-//                    }
-//                }
-//            }
-//        }
-//        
-//        if(board.getPiece(destination_x+2, destination_y+1) != null && board.getPiece(destination_x+2, destination_y+1).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        else if(board.getPiece(destination_x+2, destination_y-1) != null && board.getPiece(destination_x+2, destination_y-1).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        else if (board.getPiece(destination_x - 2, destination_y - 1) != null && board.getPiece(destination_x - 2, destination_y - 1).canMove(destination_x, destination_y)) {
-//            notInCheck = false;
-//        }
-//        else if(board.getPiece(destination_x-2, destination_y+1) != null && board.getPiece(destination_x-2, destination_y+1).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        else if(board.getPiece(destination_x+1, destination_y+2) != null && board.getPiece(destination_x+1, destination_y+2).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        else if(board.getPiece(destination_x+1, destination_y-2) != null && board.getPiece(destination_x+1, destination_y-2).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        else if(board.getPiece(destination_x-1, destination_y-2) != null && board.getPiece(destination_x-1, destination_y-2).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        else if(board.getPiece(destination_x-1, destination_y+2) != null && board.getPiece(destination_x-1, destination_y+2).canMove(destination_x, destination_y)){
-//            notInCheck = false;
-//        }
-//        return notInCheck;
-//    }
-    
     @Override 
     public Piece findCheck(){
         Piece checkPiece = null;
@@ -319,9 +241,6 @@ public class King extends Piece {
     @Override
     public Boolean checkMateScan(){
         
-        //checks if king has any valid moves first
-        boolean canMove = false;
-        
         //double loop to check every square around the king
         for(int i = -1; i < 2; i++){
             for(int j = -1; j < 2; j++){
@@ -333,13 +252,13 @@ public class King extends Piece {
                         //make sure opposite colors if attacking
                         if(board.getPiece(getX() + i, getY() + j).isWhite() != isWhite()){
                             if(checkScan(getX() + i, getY() + j)){
-                                canMove = true;
+                                return true;
                             }
                         }
                     }
                     else{
                         if(checkScan(getX() + i, getY() + j)){
-                            canMove = true;
+                            return true;
                         }
                     }
                 }
@@ -350,10 +269,10 @@ public class King extends Piece {
         //need to check if any friendly piece can block
         //was easier to do in board object bc had access to all pieces 
         if(board.canBeBlocked(getX(), getY(), isWhite())){
-            canMove = true;
+            return true;
         }       
         
-        return canMove;
+        return false;
     }
 
     public Piece findPiece(int x_direction, int y_direction, int starting_x, int starting_y){

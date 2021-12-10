@@ -146,10 +146,9 @@ public class Piece {
             slopeX = diffX/abs(diffX); 
         }
         
-        for(int i=0; i < Math.max(diffX, diffY)-1; i++){
-            attackSquares.add(new Point(getX()+slopeX, getY() + slopeY));
+        for(int i=1; i < Math.max(abs(diffX), abs(diffY)); i++){
+            attackSquares.add(new Point(getX()+(slopeX*i), getY() + (slopeY*i)));
         }
-        attackSquares.add(new Point(getX(), getY()));
         
         return attackSquares;
     }

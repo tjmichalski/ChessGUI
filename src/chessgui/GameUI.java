@@ -5,14 +5,11 @@
  */
 package chessgui;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +24,6 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -57,7 +53,7 @@ public class GameUI extends javax.swing.JPanel {
     public GameUI(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName) throws IOException {
         initComponents();
         this.mainFrame = mainFrame;
-        this.board = new Board(this, boardName, piecesName, mainFrame);
+        this.board = new Board(this, boardName, piecesName, mainFrame, false);
         this.muteButton = new ButtonGroup();
         this.duration = Duration.ofMinutes(gameTime);
         BoardPanel.add(board);
