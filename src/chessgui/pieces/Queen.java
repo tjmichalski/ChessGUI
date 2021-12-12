@@ -28,13 +28,13 @@ public class Queen extends Piece {
                 boolean clearPath = true; 
 
                 //direction variables to determine which direction to iterate the  pathfinding variables
-                float x_direction = x_difference/abs(x_difference);
-                float y_direction = y_difference/abs(y_difference);
+                int x_direction = x_difference/abs(x_difference);
+                int y_direction = y_difference/abs(y_difference);
 
                 //iterations check each square in path of destination
-                for(int i = 0; i < abs(x_difference)-1; i++){
+                for(int i = 1; i < abs(x_difference); i++){
 
-                    collisionPiece = board.getPiece(round(getX()+x_direction), round(getY()+y_direction));               
+                    collisionPiece = board.getPiece(getX()+(x_direction*i), getY()+(y_direction*i));               
 
                     //if piece is found in path, set clearPath to false
                     if(collisionPiece != null){
@@ -78,8 +78,8 @@ public class Queen extends Piece {
                     int y_direction = y_difference / abs(y_difference);
 
                     //one iteration for every space inbetween start and end
-                    for(int i = 0; i < abs(y_difference)-1; i++){
-                        collisionPiece = board.getPiece(getX(), getY()+y_direction);               
+                    for(int i = 1; i < abs(y_difference); i++){
+                        collisionPiece = board.getPiece(getX(), getY()+(y_direction*i));               
 
                         //if piece is found in path, set clearPath to false
                         if(collisionPiece != null){
@@ -116,8 +116,8 @@ public class Queen extends Piece {
                     //have to calculate direction in here to avoid divide by 0 error
                     int x_direction = x_difference / abs(x_difference);
                     //one iteration for every space inbetween start and end
-                    for(int i = 0; i < abs(x_difference)-1; i++){
-                        collisionPiece = board.getPiece(getX() + x_direction, getY());               
+                    for(int i = 1; i < abs(x_difference); i++){
+                        collisionPiece = board.getPiece(getX() + (x_direction*i), getY());               
 
                         //if piece is found in path, set clearPath to false
                         if(collisionPiece != null){

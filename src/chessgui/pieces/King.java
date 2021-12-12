@@ -45,11 +45,11 @@ public class King extends Piece {
             
             Boolean clearPath = true;
             //castling right
-            if(destination_x - getX() == 2 && destination_y - getY() == 0){
+            if(destination_x - getX() == 3 && destination_y - getY() == 0){
                 
                 Piece castlePiece = board.getPiece(7, getY());
                 //can only be rook piece if in corner and movecounter = 0
-                if(castlePiece.getMoveCounter() == 0){
+                if(castlePiece.getMoveCounter() == 0 && castlePiece.isWhite() == isWhite()){
                     
                     Piece collisionPiece;
                     //clear path check
@@ -69,11 +69,11 @@ public class King extends Piece {
             else if(destination_x - getX() == (-2) && destination_y - getY() == 0){
                 Piece castlePiece = board.getPiece(0, getY());
                 //can only be rook piece if in corner and movecounter = 0
-                if(castlePiece.getMoveCounter() == 0){
+                if(castlePiece.getMoveCounter() == 0 && castlePiece.isWhite() == isWhite()){
                     
                     Piece collisionPiece;
                     //clear path check
-                    for(int i = (getX()-1); i > 1; i--){
+                    for(int i = (getX()-1); i >= 1; i--){
                         collisionPiece = board.getPiece(i, getY());
                         
                         if(collisionPiece != null){
@@ -89,10 +89,10 @@ public class King extends Piece {
             else{
                 return -1;
             }
-//            //extra 
-//            board.castleMove = true;
+            
             
             if(clearPath){
+                board.castleMove = true;
                 return 1;
             }
             else{

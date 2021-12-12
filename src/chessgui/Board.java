@@ -45,8 +45,8 @@ public final class Board extends JPanel {
     private boolean computerPlayer;
     public Piece Active_Piece;
     public Piece lastRemoved;
-    private Piece blackKing;
-    private Piece whiteKing;
+    public Piece blackKing;
+    public Piece whiteKing;
     private GameUIPanel gameUI;
     
     public Piece lastMoved;
@@ -107,13 +107,13 @@ public final class Board extends JPanel {
         White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
         White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
         White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
-        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
-        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
         White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
         White_Pieces.add(new Pawn(4,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(2,1,true,"Pawn.png",this, 1));
         White_Pieces.add(new Pawn(5,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(1,1,true,"Pawn.png",this, 1));
         White_Pieces.add(new Pawn(6,1,true,"Pawn.png",this, 1));
+        White_Pieces.add(new Pawn(0,1,true,"Pawn.png",this, 1));
         White_Pieces.add(new Pawn(7,1,true,"Pawn.png",this, 1));
 
         Black_Pieces.add(new King(3,7,false,"King.png",this, 31));
@@ -450,7 +450,7 @@ public final class Board extends JPanel {
             if(castleMove){
                 castleMove = false;
                 //right castle
-                if(lastMoved.getX() - lastMoved.getLast_x() == 2){
+                if(lastMoved.getX() - lastMoved.getLast_x() == 3){
                     Piece castlePiece = getPiece(7, lastMoved.getY());
                     castlePiece.setX(lastMoved.getX()-1);
                     castlePiece.setY(lastMoved.getY());

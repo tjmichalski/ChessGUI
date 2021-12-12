@@ -27,7 +27,7 @@ public class Rook extends Piece {
             int y_direction = y_difference / abs(y_difference);
             
             //one iteration for every space inbetween start and end
-            for(int i = 0; i < abs(y_difference)-1; i++){
+            for(int i = 1; i < abs(y_difference); i++){
                 collisionPiece = board.getPiece(getX(), getY()+(y_direction*i));               
                 
                 //if piece is found in path, set clearPath to false
@@ -66,8 +66,8 @@ public class Rook extends Piece {
             //have to calculate direction in here to avoid divide by 0 error
             int x_direction = x_difference / abs(x_difference);
             //one iteration for every space inbetween start and end
-            for(int i = 0; i < abs(x_difference)-1; i++){
-                collisionPiece = board.getPiece(getX() + x_direction, getY());               
+            for(int i = 1; i < abs(x_difference); i++){
+                collisionPiece = board.getPiece(getX() + (x_direction*i), getY());
                 
                 //if piece is found in path, set clearPath to false
                 if(collisionPiece != null){

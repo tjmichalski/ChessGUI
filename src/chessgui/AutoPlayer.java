@@ -6,6 +6,7 @@
 package chessgui;
 
 import chessgui.pieces.Piece;
+import java.awt.geom.Point2D;
 import static java.lang.Math.abs;
 import static java.lang.Math.round;
 import static java.lang.Math.sqrt;
@@ -32,24 +33,100 @@ public class AutoPlayer {
     }
     
     public void getNextMove(){
-        if(moveCounter < selectedOpening.length){
-            board.Active_Piece = board.getPiece(Integer.parseInt(selectedOpening[moveCounter].charAt(0) + ""), Integer.parseInt(selectedOpening[moveCounter].charAt(1) + ""));
-            board.movePiece(board.getPiece(Integer.parseInt(selectedOpening[moveCounter].charAt(0) + ""), Integer.parseInt(selectedOpening[moveCounter].charAt(1) + "")), 
-                    Integer.parseInt(selectedOpening[moveCounter].charAt(2) + ""), Integer.parseInt(selectedOpening[moveCounter].charAt(3) + ""), true);
-        }
-        else if (!canTake()){
-            if(!canDevelop()){
-                System.out.println("can't develop");
+        if(board.whiteKing.checkScan(board.whiteKing.getX(), board.whiteKing.getY())){    
+            if(moveCounter < selectedOpening.length){
+                board.Active_Piece = board.getPiece(Integer.parseInt(selectedOpening[moveCounter].charAt(0) + ""), Integer.parseInt(selectedOpening[moveCounter].charAt(1) + ""));
+                board.movePiece(board.getPiece(Integer.parseInt(selectedOpening[moveCounter].charAt(0) + ""), Integer.parseInt(selectedOpening[moveCounter].charAt(1) + "")), 
+                        Integer.parseInt(selectedOpening[moveCounter].charAt(2) + ""), Integer.parseInt(selectedOpening[moveCounter].charAt(3) + ""), true);
             }
+            else if (!canTake()){
+                if(board.whiteKing.getMoveCounter() == 0){
+                    if(!canCastle()){
+                        if(!canDevelop()){
+                            System.out.println("can't develop");
+                        }
+                    }
+                }
+                else if(!canDevelop()){
+                    System.out.println("can't develop or castle");
+                }
+
+            }
+        }
+        //get out of check
+        else{
+            clearCheck();
         }
         
         moveCounter++;
     }
     
+    public boolean clearCheck(){
+        if(!findBlock(board.whiteKing.getX(), board.whiteKing.getY())){
+            for(int x= -1; x<2; x++){
+              for(int y= -1; y<2; y++){
+                  if(board.whiteKing.getX() + x < 8 && board.whiteKing.getX() + x >= 0 && board.whiteKing.getY() + y < 8 && board.whiteKing.getY() + y >= 0){
+                      if(board.whiteKing.canMove(board.whiteKing.getX() + x, board.whiteKing.getY() + y) > 0){
+                          board.Active_Piece = board.whiteKing;
+                          board.movePiece(board.whiteKing, board.whiteKing.getX() + x, board.whiteKing.getY() + y, true); 
+                          return true;
+                      }
+                  }
+              }
+          }  
+        }
+            
+        return false;
+    }
+    
+    //find if king can be blocked - variables recieved pertain to king needing needing defending
+    public Boolean findBlock(int kingX, int kingY){ 
+        ArrayList<Piece> canMovers = new ArrayList();
+        ArrayList<Point2D> attackSquares;
+
+            for(int i=0; i < board.Black_Pieces.size(); i++){
+                if(board.Black_Pieces.get(i).canMove(kingX, kingY) > 0){
+                    canMovers.add(board.Black_Pieces.get(i));
+                }
+            }
+            
+            attackSquares = canMovers.get(0).findAttackSquares(kingX, kingY);                      
+                for(int k=0; k<board.White_Pieces.size(); k++){
+                    for(int j=0; j<attackSquares.size(); j++){
+                        if(board.White_Pieces.get(k).canMove((int)attackSquares.get(j).getX(), (int)attackSquares.get(j).getY()) > 0){
+                            board.Active_Piece = board.White_Pieces.get(k);
+                            board.movePiece(board.White_Pieces.get(k), (int)attackSquares.get(j).getX(), (int)attackSquares.get(j).getY(), true);
+                            return true;
+                        }
+                    }
+                }
+
+        return false;
+    }
+    
+    public boolean canCastle(){
+        
+        if(board.whiteKing.getMoveCounter() == 0){
+            if(board.whiteKing.canMove(1, 0) > 0){
+                board.Active_Piece = board.whiteKing;
+                board.movePiece(board.whiteKing, 1, 0, true);
+                return true;
+            }
+            else if(board.whiteKing.canMove(6, 0) > 0){
+                board.Active_Piece = board.whiteKing;
+                board.movePiece(board.whiteKing, 6, 0, true);
+                return true;
+            }
+            
+        }
+        
+        return false;
+    }
+    
     public boolean canDevelop(){
         
         for(Piece piece : board.White_Pieces){
-            if(piece.getNotationName().equals("N") || piece.getNotationName().equals("B") || piece.getNotationName().equals("P")){
+            if(piece.getNotationName().equals("N") || piece.getNotationName().equals("B")){
                 double distance = getDistance(piece.getX(), piece.getY());
                 double bestDistance = distance;
                 int destinationX=0, destinationY=0;
@@ -61,6 +138,9 @@ public class AutoPlayer {
 
                             for(Piece attackingPiece : board.Black_Pieces){
                                 if(attackingPiece.canMove(x, y) >= 0){
+                                    attacked = true;
+                                }
+                                else if(attackingPiece.getNotationName().equals("P") && abs(piece.getY() - attackingPiece.getY()) == 1 && piece.getX()-attackingPiece.getX() == 1){
                                     attacked = true;
                                 }
                             }
@@ -80,6 +160,34 @@ public class AutoPlayer {
                     board.movePiece(piece, destinationX, destinationY, true);
                     
                     return true;
+                }
+            }
+            else if(piece.getNotationName().equals("P")){
+                if(piece.canMove(piece.getX(), piece.getY()+2) > 0){
+                    boolean attacked = false;
+                    for(Piece attacker : board.Black_Pieces){
+                        if (attacker.canMove(piece.getX(), piece.getLast_y()+2) >= 0){
+                            attacked = true;
+                        }
+                    }
+                    if(!attacked){
+                        board.Active_Piece = board.getPiece(piece.getX(), piece.getY());
+                        board.movePiece(piece, piece.getX(), piece.getY()+2, true);
+                        return true;
+                    }
+                }
+                else if(piece.canMove(piece.getX(), piece.getY()+1) > 0){
+                    boolean attacked = false;
+                    for(Piece attacker : board.Black_Pieces){
+                        if (attacker.canMove(piece.getX(), piece.getLast_y()+1) >= 0){
+                            attacked = true;
+                        }
+                    }
+                    if(!attacked){
+                        board.Active_Piece = board.getPiece(piece.getX(), piece.getY());
+                        board.movePiece(piece, piece.getX(), piece.getY()+1, true);
+                        return true;
+                    }
                 }
             }
             
@@ -129,7 +237,6 @@ public class AutoPlayer {
         
         if(piece != null){
             board.Active_Piece = board.getPiece(originX, originY);
-            System.out.println(piece);
             board.movePiece(piece, destinationX, destinationY, true);
             
             return true;
