@@ -63,10 +63,11 @@ public class AutoPlayer {
     
     public boolean clearCheck(){
         if(!findBlock(board.whiteKing.getX(), board.whiteKing.getY())){
-            for(int x= -1; x<2; x++){
-              for(int y= -1; y<2; y++){
-                  if(board.whiteKing.getX() + x < 8 && board.whiteKing.getX() + x >= 0 && board.whiteKing.getY() + y < 8 && board.whiteKing.getY() + y >= 0){
+            for(int x= 1; x> -2; x--){
+              for(int y= 1; y > -2; y--){
+                  if(board.whiteKing.getX() + x < 8 && board.whiteKing.getX() + x >= 0 && board.whiteKing.getY() + y < 8 && board.whiteKing.getY() + y > 0){
                       if(board.whiteKing.canMove(board.whiteKing.getX() + x, board.whiteKing.getY() + y) > 0){
+                          System.out.println("hello");
                           board.Active_Piece = board.whiteKing;
                           board.movePiece(board.whiteKing, board.whiteKing.getX() + x, board.whiteKing.getY() + y, true); 
                           return true;
@@ -126,7 +127,7 @@ public class AutoPlayer {
     public boolean canDevelop(){
         
         for(Piece piece : board.White_Pieces){
-            if(piece.getNotationName().equals("N") || piece.getNotationName().equals("B")){
+            if(piece.getNotationName().equals("N") || piece.getNotationName().equals("B") || piece.getNotationName().equals("Q")){
                 double distance = getDistance(piece.getX(), piece.getY());
                 double bestDistance = distance;
                 int destinationX=0, destinationY=0;
@@ -140,7 +141,7 @@ public class AutoPlayer {
                                 if(attackingPiece.canMove(x, y) >= 0){
                                     attacked = true;
                                 }
-                                else if(attackingPiece.getNotationName().equals("P") && abs(piece.getY() - attackingPiece.getY()) == 1 && piece.getX()-attackingPiece.getX() == 1){
+                                else if(attackingPiece.getNotationName().equals("P") && abs(y - attackingPiece.getY()) == 1 && abs(x-attackingPiece.getX()) == 1){
                                     attacked = true;
                                 }
                             }
@@ -190,7 +191,118 @@ public class AutoPlayer {
                     }
                 }
             }
-            
+            else if(piece.getNotationName().equals("R")){
+                int counter = 0;
+                int counter2 = 0;
+                int originalAttack = 0;
+                int finalX = -1, finalY = -1;
+                ArrayList<Integer> xMoves = new ArrayList(), yMoves = new ArrayList();
+                
+                for (int x=0; x<8; x++){
+                    for(int y=0; y<8; y++){
+                        if(!(y == piece.getY() && x == piece.getX())){
+                            if(piece.canMove(x, y) >= 0){
+                                counter++;
+                                if(piece.canMove(x, y) > 0){
+                                    boolean attacked = false;
+                                    for(Piece attacker : board.Black_Pieces){
+                                        if(attacker.canMove(x, y) >=0){
+                                            attacked = true;
+                                        }
+                                    }
+
+                                    if(!attacked){
+                                        xMoves.add(x);
+                                        yMoves.add(y);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if(piece.getX() == 7 || piece.getX() == 0){
+                    counter++;
+                }
+                if(piece.getY() == 7 || piece.getY() == 0){
+                    counter++;
+                }
+                
+                originalAttack = counter;
+                
+                for(int i=0; i<xMoves.size(); i++){
+                    counter2=0;
+                    boolean pieceFound = false;
+                    int index = 1;
+                    
+                    //right move
+                    while(!pieceFound){
+                        counter2++;
+                        
+                        if(board.getPiece(xMoves.get(i) + index, yMoves.get(i)) != null || xMoves.get(i) + index >= 7){
+                            pieceFound = true;
+                            index = 1;
+                        }
+                        else{
+                            index ++;
+                        }
+                    }
+                    
+                    //left move
+                    pieceFound = false;
+                    while(!pieceFound){
+                        counter2++;
+                        
+                        if(board.getPiece(xMoves.get(i) - index, yMoves.get(i)) != null || xMoves.get(i) - index <= 0){
+                            pieceFound = true;
+                            index = 1;
+                        }
+                        else{
+                            index ++;
+                        }
+                    }
+                    
+                    //up move
+                    pieceFound = false;
+                    while(!pieceFound){
+                        counter2++;
+                        
+                        if(board.getPiece(xMoves.get(i), yMoves.get(i) - index) != null || yMoves.get(i) - index <= 0){
+                            pieceFound = true;
+                            index = 1;
+                        }
+                        else{
+                            index ++;
+                        }
+                    }
+                    
+                    //down move
+                    pieceFound = false;
+                    
+                    while(!pieceFound){
+                        counter2++;
+                        
+                        if(board.getPiece(xMoves.get(i), yMoves.get(i)+ index) != null || yMoves.get(i) + index >= 7){
+                            pieceFound = true;
+                            index = 1;
+                        }
+                        else{
+                            index ++;
+                        }
+                    }
+                    if(counter2 > counter){
+                        counter = counter2;
+                        finalX = xMoves.get(i);
+                        finalY = yMoves.get(i);
+                    }
+                    
+                }
+                if(counter > originalAttack){
+                    board.Active_Piece = board.getPiece(piece.getX(), piece.getY());
+                    board.movePiece(piece, finalX, finalY, true);
+                    return true;
+                }
+                
+            }            
         }
         
         return false;

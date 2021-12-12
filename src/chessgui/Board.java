@@ -100,11 +100,11 @@ public final class Board extends JPanel {
 
         White_Pieces.add(new King(3,0,true,"King.png",this, 31));
         whiteKing = getPiece(3,0);
-        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
         White_Pieces.add(new Bishop(2,0,true,"Bishop.png",this, 3));
         White_Pieces.add(new Bishop(5,0,true,"Bishop.png",this, 3));
         White_Pieces.add(new Knight(1,0,true,"Knight.png",this, 3));
         White_Pieces.add(new Knight(6,0,true,"Knight.png",this, 3));
+        White_Pieces.add(new Queen(4,0,true,"Queen.png",this, 8));
         White_Pieces.add(new Rook(0,0,true,"Rook.png",this, 5));
         White_Pieces.add(new Rook(7,0,true,"Rook.png",this, 5));
         White_Pieces.add(new Pawn(3,1,true,"Pawn.png",this, 1));
@@ -407,6 +407,23 @@ public final class Board extends JPanel {
         }
     }
     
+    private void checkPromote(){
+        if(Active_Piece.isWhite()){
+            if (Active_Piece.getY() == 7){
+                White_Pieces.remove(Active_Piece);
+                White_Pieces.add(new Queen(Active_Piece.getX(), Active_Piece.getY(), true, "Queen.png", this, 8));
+            }
+        }
+        else if(!Active_Piece.isWhite()){
+            if (Active_Piece.getY() == 7){
+                Black_Pieces.remove(Active_Piece);
+                Black_Pieces.add(new Queen(Active_Piece.getX(), Active_Piece.getY(), true, "Queen.png", this, 8));
+            }
+        }
+        
+        
+    }
+    
     //move indicated piece to indicated coordinates
     public void movePiece(Piece piece, int x, int y, boolean is_whites_turn){
         
@@ -430,6 +447,7 @@ public final class Board extends JPanel {
             // if piece is a pawn set has_moved to true
             if (Active_Piece.getClass().equals(Pawn.class))
             {
+                checkPromote();
                 Pawn castedPawn = (Pawn)(Active_Piece);
                 castedPawn.setHasMoved(true);
                 fiftyMovesCounter = 0;
