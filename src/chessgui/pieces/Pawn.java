@@ -80,7 +80,6 @@ public class Pawn extends Piece {
             }
             
             //diagonal movement nest
-            //think fancy take would come next in hierarchy
             else{
                 
                 //separate colors for direction

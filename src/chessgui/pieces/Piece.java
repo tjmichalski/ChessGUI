@@ -15,7 +15,7 @@ public class Piece {
     private String file_path;
     public Board board;
     private int moveCounter;
-    private int capturePoints;
+    private final int capturePoints;
     private String notationName;
     
     public Piece(int x, int y, boolean is_white, String file_path, Board board, int capturePoints, String notationName)
@@ -28,6 +28,10 @@ public class Piece {
         this.moveCounter = 0;
         this.capturePoints = capturePoints;
         this.notationName = notationName;
+    }
+    
+    public int getCapturePoints(){
+        return capturePoints;
     }
 
     public String getNotationName() {

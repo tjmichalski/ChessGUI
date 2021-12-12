@@ -36,14 +36,15 @@ public final class Board extends JPanel {
 
     
     //lists of pieces for each player
-    private ArrayList<Piece> White_Pieces;
-    private ArrayList<Piece> Black_Pieces;
+    public ArrayList<Piece> White_Pieces;
+    public ArrayList<Piece> Black_Pieces;
 
     
     //various functional variables for game rules and activity
+    private AutoPlayer autoPlayer;
     private boolean computerPlayer;
-    private Piece Active_Piece;
-    private Piece lastRemoved;
+    public Piece Active_Piece;
+    public Piece lastRemoved;
     private Piece blackKing;
     private Piece whiteKing;
     private GameUIPanel gameUI;
@@ -88,6 +89,10 @@ public final class Board extends JPanel {
         
         initPieces();       
         drawBoard();
+        if(computerPlayer){
+            this.autoPlayer = new AutoPlayer(mainFrame, this);
+            autoPlayer.getNextMove();
+        }
     }
     
     //create and add fresh game of pieces to pieces lists
@@ -403,20 +408,164 @@ public final class Board extends JPanel {
     }
     
     //move indicated piece to indicated coordinates
-    public void movePiece(Piece piece, int x, int y){
-        piece.setX(x);
-        piece.setY(y);
-        lastMoved = piece;
-        gameUI.switchTimers();
-        //if playing against computer, generate its next move
-        if(computerPlayer){
-            getNextMove();
-        }
-    }
-    
-    //tbd
-    private void getNextMove(){
+    public void movePiece(Piece piece, int x, int y, boolean is_whites_turn){
         
+        if(Active_Piece != null && Active_Piece.canMove(x, y)  > 0
+            && ((is_whites_turn && Active_Piece.isWhite()) || (!is_whites_turn && !Active_Piece.isWhite()))){
+            Piece clickedPiece = getPiece(x, y);
+            
+            if(clickedPiece != null){
+                lastRemoved = clickedPiece;
+                checkRemoval(clickedPiece, is_whites_turn);
+            }
+            else{
+                lastRemoved = null;
+            }
+
+            piece.setX(x);
+            piece.setY(y);
+            lastMoved = piece;
+            gameUI.switchTimers();
+
+            // if piece is a pawn set has_moved to true
+            if (Active_Piece.getClass().equals(Pawn.class))
+            {
+                Pawn castedPawn = (Pawn)(Active_Piece);
+                castedPawn.setHasMoved(true);
+                fiftyMovesCounter = 0;
+            }
+            else if(lastRemoved != null){
+                fiftyMovesCounter = 0;
+            }
+            else{
+                fiftyMovesCounter++;
+            }
+
+            Active_Piece = null;
+            lastMoved.setMoveCounter(lastMoved.getMoveCounter() + 1);
+            turnCounter++;
+
+            //move rook if just castled
+            //castleMove will be false if last move reverted
+            if(castleMove){
+                castleMove = false;
+                //right castle
+                if(lastMoved.getX() - lastMoved.getLast_x() == 2){
+                    Piece castlePiece = getPiece(7, lastMoved.getY());
+                    castlePiece.setX(lastMoved.getX()-1);
+                    castlePiece.setY(lastMoved.getY());
+                }
+                //castle left
+                else{
+                    Piece castlePiece = getPiece(0, lastMoved.getY());
+                    castlePiece.setX(lastMoved.getX()+1);
+                    castlePiece.setY(lastMoved.getY());
+                }
+            }
+
+            //enPassantMove variable set to true in pawn attack function
+            if(enPassantMove){
+                enPassantMove = false;
+
+                //remove piece behind whatever color is taking
+                if(lastMoved.isWhite()){
+                    lastRemoved = getPiece(lastMoved.getX(), lastMoved.getY()-1);
+                    Black_Pieces.remove(lastRemoved);
+                    try {
+                        gameUI.pieceRemoved(lastRemoved.getFilePath(), false);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else{
+                    lastRemoved = getPiece(lastMoved.getX(), lastMoved.getY()+1);
+                    White_Pieces.remove(lastRemoved);
+                    try {
+                        gameUI.pieceRemoved(lastRemoved.getFilePath(), true);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+
+            //if whiteking in check
+            if(!whiteKing.checkScan(whiteKing.getX(), whiteKing.getY())){
+                //if put self in check, revert move, illegal
+                if(lastMoved.isWhite()){
+                    try {
+                        revertMove();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else {
+
+                    recordGamestate();
+                    recordMove(lastRemoved, lastMoved);
+
+                    //if white king in checkmate, gameover
+                    if(!whiteKing.checkMateScan()){
+                        try {
+                            addEndgame("Black Checkmate");
+                            gameUI.gameOver(-1, "Checkmate");
+                        } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
+                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    else{
+                        try {
+                            playSound("sounds/check.wav");
+                        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+
+                }
+            }
+            //if black king in check
+            else if (!blackKing.checkScan(blackKing.getX(), blackKing.getY())){
+                //if put self in check, revert move, illegal
+                if(!lastMoved.isWhite()){
+                    try {
+                        revertMove();
+                    } catch (IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else{
+
+                    recordGamestate();
+                    recordMove(lastRemoved, lastMoved);
+
+                    //if black king in checkmate, gameover
+                    if(!blackKing.checkMateScan()){
+                        try {
+                            addEndgame("White Checkmate");
+                            gameUI.gameOver(1, "Checkmate");
+                        } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
+                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    else{
+                        try {
+                            playSound("sounds/check.wav");
+                        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }
+            else{
+                try {
+                    playSound("sounds/move.wav");
+                } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                recordGamestate();
+                recordMove(lastRemoved, lastMoved);
+            }
+        }
+        drawBoard();
     }
     
     //return game history
@@ -424,229 +573,86 @@ public final class Board extends JPanel {
         return this.moves;
     }
     
+    
+    public void checkRemoval(Piece clicked_piece, boolean is_whites_turn){
+            // if piece is there, remove it so we can move there
+                if (clicked_piece.isWhite())
+                {
+                    White_Pieces.remove(clicked_piece);
+                    try {
+                        gameUI.pieceRemoved(clicked_piece.getFilePath(), true);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else
+                {
+                    Black_Pieces.remove(clicked_piece);
+                    try {
+                        gameUI.pieceRemoved(clicked_piece.getFilePath(), false);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                try {
+                    playSound("sounds/take.wav");
+                } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+                }
+    }
+    
     //
     private final MouseAdapter mouseAdapter = new MouseAdapter() {
 
         @Override
-        public void mousePressed(MouseEvent e) {
-            if(!computerPlayer || turnCounter%2 ==1){
+        public void mousePressed(MouseEvent e) {            
+            //calculates which square you clicked on by aimple arithematic (Spellcheck?)
+            int d_X = e.getX();
+            int d_Y = e.getY();  
+            int Clicked_Row = d_Y / Square_Width;
+            int Clicked_Column = d_X / Square_Width;
+
+            //boolean for who's turn it is - seems like could be better method
+            boolean is_whites_turn = true;
+            if (turnCounter%2 == 1)
+            {
+                is_whites_turn = false;
+            }
+
+            //passed clicked square to getpiece function to see if any pieces present
+            //assigns to click_piece object even if null
+            Piece clicked_piece = getPiece(Clicked_Column, Clicked_Row);
+
+            //sets active piece to currently clicked piece if selection is valid 
+            // based on who's turn it is
+            if (Active_Piece == null && clicked_piece != null && 
+                    ((is_whites_turn && clicked_piece.isWhite()) || (!is_whites_turn && !clicked_piece.isWhite())))
+            {
+                Active_Piece = clicked_piece;
+                drawBoard();
+            }
+
+            //deselects current square 
+            else if (Active_Piece != null && Active_Piece.getX() == Clicked_Column && Active_Piece.getY() == Clicked_Row)
+            {
+                Active_Piece = null;
+                drawBoard();
+            }
+            else{
+                movePiece(Active_Piece, Clicked_Column, Clicked_Row, is_whites_turn);
+            }
             
-                //calculates which square you clicked on by aimple arithematic (Spellcheck?)
-                int d_X = e.getX();
-                int d_Y = e.getY();  
-                int Clicked_Row = d_Y / Square_Width;
-                int Clicked_Column = d_X / Square_Width;
-
-                //boolean for who's turn it is - seems like could be better method
-                boolean is_whites_turn = true;
-                if (turnCounter%2 == 1)
-                {
-                    is_whites_turn = false;
-                }
-
-                //passed clicked square to getpiece function to see if any pieces present
-                //assigns to click_piece object even if null
-                Piece clicked_piece = getPiece(Clicked_Column, Clicked_Row);
-
-                //sets active piece to currently clicked piece if selection is valid 
-                // based on who's turn it is
-                if (Active_Piece == null && clicked_piece != null && 
-                        ((is_whites_turn && clicked_piece.isWhite()) || (!is_whites_turn && !clicked_piece.isWhite())))
-                {
-                    Active_Piece = clicked_piece;
-                }
-
-                //deselects current square 
-                else if (Active_Piece != null && Active_Piece.getX() == Clicked_Column && Active_Piece.getY() == Clicked_Row)
-                {
-                    Active_Piece = null;
-                }
-
-                //moves if valid move based on canmove() function
-                else if (Active_Piece != null && Active_Piece.canMove(Clicked_Column, Clicked_Row)  > 0
-                        && ((is_whites_turn && Active_Piece.isWhite()) || (!is_whites_turn && !Active_Piece.isWhite())))
-                {
-                    // if piece is there, remove it so we can move there
-                    if (clicked_piece != null)
-                    {
-                        lastRemoved = clicked_piece;
-                        if (clicked_piece.isWhite())
-                        {
-                            White_Pieces.remove(clicked_piece);
-                            try {
-                                gameUI.pieceRemoved(clicked_piece.getFilePath(), true);
-                            } catch (IOException ex) {
-                                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        else
-                        {
-                            Black_Pieces.remove(clicked_piece);
-                            try {
-                                gameUI.pieceRemoved(clicked_piece.getFilePath(), false);
-                            } catch (IOException ex) {
-                                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        try {
-                            playSound("sounds/take.wav");
-                        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    //else no piece removed
-                    else{
-                        lastRemoved = null;
-                    }
+            
+            
+            //check for non checkmate endgames and redraw board
+            try {
+                checkEndgames();
+            } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
+                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
+            }
                     
-                    movePiece(Active_Piece, Clicked_Column, Clicked_Row);
-
-                    // if piece is a pawn set has_moved to true
-                    if (Active_Piece.getClass().equals(Pawn.class))
-                    {
-                        Pawn castedPawn = (Pawn)(Active_Piece);
-                        castedPawn.setHasMoved(true);
-                        fiftyMovesCounter = 0;
-                    }
-                    else if(lastRemoved != null){
-                        fiftyMovesCounter = 0;
-                    }
-                    else{
-                        fiftyMovesCounter++;
-                    }
-
-                    Active_Piece = null;
-                    lastMoved.setMoveCounter(lastMoved.getMoveCounter() + 1);
-                    turnCounter++;
-
-                    //move rook if just castled
-                    //castleMove will be false if last move reverted
-                    if(castleMove){
-                        castleMove = false;
-                        //right castle
-                        if(lastMoved.getX() - lastMoved.getLast_x() == 2){
-                            Piece castlePiece = getPiece(7, lastMoved.getY());
-                            castlePiece.setX(lastMoved.getX()-1);
-                            castlePiece.setY(lastMoved.getY());
-                        }
-                        //castle left
-                        else{
-                            Piece castlePiece = getPiece(0, lastMoved.getY());
-                            castlePiece.setX(lastMoved.getX()+1);
-                            castlePiece.setY(lastMoved.getY());
-                        }
-                    }
-
-                    //enPassantMove variable set to true in pawn attack function
-                    if(enPassantMove){
-                        enPassantMove = false;
-
-                        //remove piece behind whatever color is taking
-                        if(lastMoved.isWhite()){
-                            lastRemoved = getPiece(lastMoved.getX(), lastMoved.getY()-1);
-                            Black_Pieces.remove(lastRemoved);
-                            try {
-                                gameUI.pieceRemoved(lastRemoved.getFilePath(), false);
-                            } catch (IOException ex) {
-                                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        else{
-                            lastRemoved = getPiece(lastMoved.getX(), lastMoved.getY()+1);
-                            White_Pieces.remove(lastRemoved);
-                            try {
-                                gameUI.pieceRemoved(lastRemoved.getFilePath(), true);
-                            } catch (IOException ex) {
-                                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-
-                    //if whiteking in check
-                    if(!whiteKing.checkScan(whiteKing.getX(), whiteKing.getY())){
-                        //if put self in check, revert move, illegal
-                        if(lastMoved.isWhite()){
-                            try {
-                                revertMove();
-                            } catch (IOException ex) {
-                                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        else {
-
-                            recordGamestate();
-                            recordMove(lastRemoved, lastMoved);
-                            
-                            //if white king in checkmate, gameover
-                            if(!whiteKing.checkMateScan()){
-                                try {
-                                    addEndgame("Black Checkmate");
-                                    gameUI.gameOver(-1, "Checkmate");
-                                } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-                            else{
-                                try {
-                                    playSound("sounds/check.wav");
-                                } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-                                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-
-                        }
-                    }
-                    //if black king in check
-                    else if (!blackKing.checkScan(blackKing.getX(), blackKing.getY())){
-                        //if put self in check, revert move, illegal
-                        if(!lastMoved.isWhite()){
-                            try {
-                                revertMove();
-                            } catch (IOException ex) {
-                                Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                        else{
-                            
-                            recordGamestate();
-                            recordMove(lastRemoved, lastMoved);
-                            
-                            //if black king in checkmate, gameover
-                            if(!blackKing.checkMateScan()){
-                                try {
-                                    addEndgame("White Checkmate");
-                                    gameUI.gameOver(1, "Checkmate");
-                                } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-                            else{
-                                try {
-                                    playSound("sounds/check.wav");
-                                } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-                                    Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-                        }
-                    }
-                    else{
-                        try {
-                            playSound("sounds/move.wav");
-                        } catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        recordGamestate();
-                        recordMove(lastRemoved, lastMoved);
-                    }
-
-                }
-                //check for non checkmate endgames and redraw board
-                try {
-                            checkEndgames();
-                        } catch (IOException | ClassNotFoundException | LineUnavailableException | UnsupportedAudioFileException ex) {
-                            Logger.getLogger(Board.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        drawBoard();
+            if(computerPlayer && turnCounter%2==0){
+                autoPlayer.getNextMove();
             }
         }
 

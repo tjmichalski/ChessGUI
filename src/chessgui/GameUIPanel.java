@@ -52,11 +52,17 @@ public class GameUIPanel extends javax.swing.JPanel {
     
     private final int increment;
     
-    public GameUIPanel(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName) throws IOException {
+    public GameUIPanel(MainFrame mainFrame, int gameTime, int increment, String boardName, String piecesName, Boolean computerPlayer) throws IOException {
         //init variables
         initComponents();
         this.mainFrame = mainFrame;
-        this.board = new Board(this, boardName, piecesName, mainFrame, false);
+        
+        //start clocks and display times
+        startClock(gameTime);        
+        WhiteTimeField.setText(gameTime + "m 00s");
+        BlackTimeField.setText(gameTime + "m 00s");
+        
+        this.board = new Board(this, boardName, piecesName, mainFrame, computerPlayer);
         this.duration = Duration.ofMinutes(gameTime);
         this.whiteGraphics = new ArrayList();
         this.blackGraphics = new ArrayList();
@@ -69,11 +75,6 @@ public class GameUIPanel extends javax.swing.JPanel {
         BlackCapturePanel.setLayout(new GridLayout(4,4));
         WhiteCapturePanel.setLayout(new GridLayout(4,4));
         MovesHistory.setEditable(false);
-        
-        //start clocks and display times
-        startClock(gameTime);        
-        WhiteTimeField.setText(gameTime + "m 00s");
-        BlackTimeField.setText(gameTime + "m 00s");
         
         //if muted from previous game, keep muted
         if(mainFrame.isMute == true){

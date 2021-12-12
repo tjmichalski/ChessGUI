@@ -28,7 +28,7 @@ public class Rook extends Piece {
             
             //one iteration for every space inbetween start and end
             for(int i = 0; i < abs(y_difference)-1; i++){
-                collisionPiece = board.getPiece(getX(), getY()+y_direction);               
+                collisionPiece = board.getPiece(getX(), getY()+(y_direction*i));               
                 
                 //if piece is found in path, set clearPath to false
                 if(collisionPiece != null){
