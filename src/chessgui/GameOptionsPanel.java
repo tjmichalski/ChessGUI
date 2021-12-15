@@ -21,6 +21,7 @@ public class GameOptionsPanel extends javax.swing.JPanel {
         initComponents();
         this.mainFrame = mainFrame;
         
+        //set up buttons groups
         gameTime = new ButtonGroup();
         gameTime.add(TenMinButton);
         gameTime.add(TwentyMinButton);

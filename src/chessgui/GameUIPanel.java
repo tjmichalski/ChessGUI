@@ -36,7 +36,7 @@ public class GameUIPanel extends javax.swing.JPanel {
     private final MainFrame mainFrame;
     
     //board contains game pieces and board
-    private final Board board;
+    private Board board;
     
     //graphic elements for each player's captured pieces
     private final ArrayList<JLabel> whiteGraphics;
@@ -49,6 +49,7 @@ public class GameUIPanel extends javax.swing.JPanel {
     private Duration blackTimePassed, whiteTimePassed;
     private Timer blackTimer, whiteTimer;
     private Duration duration;
+    private boolean computerPlayer;
     
     private final int increment;
     
@@ -56,18 +57,24 @@ public class GameUIPanel extends javax.swing.JPanel {
         //init variables
         initComponents();
         this.mainFrame = mainFrame;
-        
-        //start clocks and display times
-        startClock(gameTime);        
+        this.computerPlayer = computerPlayer;
+        //start clocks and display times (only in multiplayer)
+        if(!computerPlayer){
+            startClock(gameTime); 
+        }
         WhiteTimeField.setText(gameTime + "m 00s");
         BlackTimeField.setText(gameTime + "m 00s");
+        WhiteTimeField.setEditable(false);
+        BlackTimeField.setEditable(false);
         
+        //init variables
         this.board = new Board(this, boardName, piecesName, mainFrame, computerPlayer);
         this.duration = Duration.ofMinutes(gameTime);
         this.whiteGraphics = new ArrayList();
         this.blackGraphics = new ArrayList();
         this.boardLayout = new FlowLayout();
         this.increment = increment;
+        
         
         //various graphic updates
         BoardPanel.add(board);
@@ -152,6 +159,7 @@ public class GameUIPanel extends javax.swing.JPanel {
         
     }
     
+    //play sound specified (for game over)
     private void playSound(String fileName) throws LineUnavailableException, UnsupportedAudioFileException, IOException{
             File file = new File(fileName);
             Clip clip = AudioSystem.getClip();
@@ -173,17 +181,19 @@ public class GameUIPanel extends javax.swing.JPanel {
     
     //on player move, turn currently on timer off, and vice versa
     public void switchTimers(){
-        if(whiteTimer.isRunning()){
-            whiteTimer.stop();           
-            blackStart = LocalDateTime.now();
-            whiteTimePassed = whiteTimePassed.plus(Duration.between(whiteStart, blackStart)).minus(Duration.ofSeconds(increment));
-            blackTimer.start();
-        }
-        else if (blackTimer.isRunning()){
-            blackTimer.stop();
-            whiteStart = LocalDateTime.now();
-            blackTimePassed = blackTimePassed.plus(Duration.between(blackStart, whiteStart)).minus(Duration.ofSeconds(increment));
-            whiteTimer.start();
+        if(!computerPlayer){
+            if(whiteTimer.isRunning()){
+                whiteTimer.stop();           
+                blackStart = LocalDateTime.now();
+                whiteTimePassed = whiteTimePassed.plus(Duration.between(whiteStart, blackStart)).minus(Duration.ofSeconds(increment));
+                blackTimer.start();
+            }
+            else if (blackTimer.isRunning()){
+                blackTimer.stop();
+                whiteStart = LocalDateTime.now();
+                blackTimePassed = blackTimePassed.plus(Duration.between(blackStart, whiteStart)).minus(Duration.ofSeconds(increment));
+                whiteTimer.start();
+            }
         }
     }
     
@@ -232,9 +242,10 @@ public class GameUIPanel extends javax.swing.JPanel {
         if(!mainFrame.isMute){
            playSound("sounds/gameOver.wav"); 
         }
-        
+        if(!computerPlayer){
         blackTimer.stop();
         whiteTimer.stop();
+        }
         BoardPanel.remove(board);
         BoardPanel.repaint();
         BoardPanel.add(new GameOverPanel(method, isWhite, mainFrame));

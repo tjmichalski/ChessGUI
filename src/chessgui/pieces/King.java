@@ -1,12 +1,15 @@
 package chessgui.pieces;
 
 import chessgui.Board;
+import java.awt.Dimension;
 import static java.lang.Math.abs;
+import java.util.ArrayList;
 
 public class King extends Piece {
 
     int starting_x, starting_y;
     boolean mateScanning = false;
+    public ArrayList<Dimension> moveableSpots;
     
     public King(int x, int y, boolean is_white, String file_path, Board board, int capturePoints)
     {
@@ -20,7 +23,6 @@ public class King extends Piece {
         int y_difference = destination_y - getY();
         
         //are they moving a single square at a time
-        //need to add in >0 for at least 1
         if (abs(x_difference) <= 1 && abs(y_difference) <= 1 && !(x_difference == 0 && y_difference == 0)){
             
             if(checkScan(destination_x, destination_y)){
@@ -40,8 +42,7 @@ public class King extends Piece {
                 return -1;
             }          
         }
-        else if(getMoveCounter() == 0){
-            
+        else if(getMoveCounter() == 0 && !board.getAutoPlayer().getMateScan() && !(destination_x == getX() && destination_y == getY())){
             
             Boolean clearPath = true;
             //castling right
@@ -49,7 +50,7 @@ public class King extends Piece {
                 
                 Piece castlePiece = board.getPiece(7, getY());
                 //can only be rook piece if in corner and movecounter = 0
-                if(castlePiece.getMoveCounter() == 0 && castlePiece.isWhite() == isWhite()){
+                if(castlePiece != null && castlePiece.getMoveCounter() == 0 && castlePiece.isWhite() == isWhite()){
                     
                     Piece collisionPiece;
                     //clear path check
@@ -57,6 +58,9 @@ public class King extends Piece {
                         collisionPiece = board.getPiece(i, getY());
                         
                         if(collisionPiece != null){
+                            clearPath = false;
+                        }
+                        else if(!board.findAttackers(i, getY(), isWhite()).isEmpty()){
                             clearPath = false;
                         }
                     }
@@ -69,7 +73,7 @@ public class King extends Piece {
             else if(destination_x - getX() == (-2) && destination_y - getY() == 0){
                 Piece castlePiece = board.getPiece(0, getY());
                 //can only be rook piece if in corner and movecounter = 0
-                if(castlePiece.getMoveCounter() == 0 && castlePiece.isWhite() == isWhite()){
+                if(castlePiece != null && castlePiece.getMoveCounter() == 0 && castlePiece.isWhite() == isWhite()){
                     
                     Piece collisionPiece;
                     //clear path check
@@ -77,6 +81,9 @@ public class King extends Piece {
                         collisionPiece = board.getPiece(i, getY());
                         
                         if(collisionPiece != null){
+                            clearPath = false;
+                        }
+                        else if(!board.findAttackers(i, getY(), isWhite()).isEmpty()){
                             clearPath = false;
                         }
                     }
@@ -92,7 +99,9 @@ public class King extends Piece {
             
             
             if(clearPath){
-                board.castleMove = true;
+                if(!board.castleScan){
+                    board.castleMove = true;
+                } 
                 return 1;
             }
             else{
@@ -190,7 +199,6 @@ public class King extends Piece {
     public Piece findCheck(){
         Piece checkPiece = null;
         
-        
         //check for every attacker except horses
         for (int i=-1; i <= 1; i++){
             for(int j=-1; j<= 1; j++){
@@ -240,7 +248,9 @@ public class King extends Piece {
     
     @Override
     public Boolean checkMateScan(){
-        
+        moveableSpots = new ArrayList();
+        moveableSpots.add(new Dimension(getX(), getY())); 
+        boolean clear = false;
         //double loop to check every square around the king
         for(int i = -1; i < 2; i++){
             for(int j = -1; j < 2; j++){
@@ -252,13 +262,15 @@ public class King extends Piece {
                         //make sure opposite colors if attacking
                         if(board.getPiece(getX() + i, getY() + j).isWhite() != isWhite()){
                             if(checkScan(getX() + i, getY() + j)){
-                                return true;
+                                moveableSpots.add(new Dimension(getX() + i, getY() + j)); 
+                                clear = true;
                             }
                         }
                     }
                     else{
                         if(checkScan(getX() + i, getY() + j)){
-                            return true;
+                            moveableSpots.add(new Dimension(getX() + i, getY() + j)); 
+                            clear = true;
                         }
                     }
                 }
@@ -269,10 +281,10 @@ public class King extends Piece {
         //need to check if any friendly piece can block
         //was easier to do in board object bc had access to all pieces 
         if(board.canBeBlocked(getX(), getY(), isWhite())){
-            return true;
-        }       
+            clear = true;
+        }    
         
-        return false;
+        return clear;
     }
 
     public Piece findPiece(int x_direction, int y_direction, int starting_x, int starting_y){

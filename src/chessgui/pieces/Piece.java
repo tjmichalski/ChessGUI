@@ -12,10 +12,14 @@ public class Piece {
     private int last_x;
     private int last_y;
     final private boolean is_white;
+    //path to piece picture
     private String file_path;
     public Board board;
+    //move counter for specific piece
     private int moveCounter;
+    //how many points the piece is worth
     private final int capturePoints;
+    //piece abbreviation for game histoy writing
     private String notationName;
     
     public Piece(int x, int y, boolean is_white, String file_path, Board board, int capturePoints, String notationName)
